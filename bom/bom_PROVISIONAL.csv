@@ -1,0 +1,32 @@
+id,description,qty,material,process,group,mass_each_kg,bbox_mm,owned_or_new,est_price_cad,source
+RIB,existing rib 01,18,plywood,existing,dish,0.078,440 x 156 x 5,owned,not yet sourced,not yet sourced
+HUB-01,rear hub disc,1,plywood,cut,dish,0.905,400 x 400 x 12,new,not yet sourced,not yet sourced
+RING-01,rim ring segment 1,6,plywood,cut,dish,0.213,433 x 280 x 12,new,not yet sourced,not yet sourced
+SPL-01,ring splice plate 1,6,plywood,cut,dish,0.06,150 x 56 x 12,new,not yet sourced,not yet sourced
+SPAR-01,rear spar 1,6,softwood,cut,dish,0.203,417 x 252 x 45,new,not yet sourced,not yet sourced
+CAP-01,centre mesh support disc,1,printed,print,dish,0.025,120 x 120 x 2,new,not yet sourced,not yet sourced
+SAD-A,inner rib cheek r01,36,printed,print,dish,0.007,30 x 17 x 14,new,not yet sourced,not yet sourced
+SAD-B,outer rib cheek r01,36,printed,print,dish,0.022,45 x 30 x 17,new,not yet sourced,not yet sourced
+BAT-01,mesh batten r=300 #01,18,softwood,cut,dish,0.009,97 x 27 x 20,new,not yet sourced,not yet sourced
+BAT-02,mesh batten r=492 #01,18,softwood,cut,dish,0.016,162 x 38 x 20,new,not yet sourced,not yet sourced
+TRUN-01,trunnion plate +Y,2,plywood,cut,dish,0.294,227 x 180 x 12,new,not yet sourced,not yet sourced
+POST-01,feed-leg rim post 30 deg,2,softwood,cut,dish,0.098,227 x 49 x 40,new,not yet sourced,not yet sourced
+LEG-01,feed leg 30 deg,3,softwood,cut,dish,0.071,339 x 287 x 206,new,not yet sourced,not yet sourced
+FPL-01,feed ring lower,2,plywood,cut,dish,0.216,250 x 250 x 12,new,not yet sourced,not yet sourced
+FPO-01,feed ring spacer 90 deg,3,softwood,cut,dish,0.02,128 x 18 x 18,new,not yet sourced,not yet sourced
+COL-01,feed can clamp collar,2,printed,print,dish,0.13,176 x 176 x 20,new,not yet sourced,not yet sourced
+FEED-01,"feed can (conductive, provisional)",1,steel,purchase/make,dish,0.585,280 x 150 x 150,new,not yet sourced,not yet sourced
+LNA-BOX,LNA enclosure envelope,1,printed,print,dish,0.126,90 x 40 x 35,new,not yet sourced,not yet sourced
+MESH-01,"reflector mesh, representative ideal surface",1,mesh,purchase,dish,0.575,1000 x 1000 x 154,new,not yet sourced,not yet sourced
+QUAD-01,elevation clamp quadrant,1,plywood,cut,dish,0.232,217 x 217 x 12,new,not yet sourced,not yet sourced
+UPR-01,fork upright +Y,2,softwood,cut,mount,1.205,620 x 90 x 45,new,not yet sourced,not yet sourced
+GUS-01,upright gusset,4,plywood,cut,mount,0.27,300 x 250 x 12,new,not yet sourced,not yet sourced
+ROCK-01,rocker board,1,plywood,cut,mount,5.184,1200 x 400 x 18,new,not yet sourced,not yet sourced
+GLIDE,PTFE azimuth glide 90 deg,3,ptfe,purchase,mount,0.005,25 x 25 x 5,new,not yet sourced,not yet sourced
+LEG-GND,ground leg 90 deg,3,softwood,cut,mount,1.361,700 x 90 x 45,new,not yet sourced,not yet sourced
+FOOT,levelling foot 90 deg,3,steel,purchase,mount,0.111,30 x 30 x 20,new,not yet sourced,not yet sourced
+GND-01,ground disc,1,plywood,cut,mount,2.121,500 x 500 x 18,new,not yet sourced,not yet sourced
+EBOX-01,digital electronics enclosure envelope,1,printed,print,mount,1.0,180 x 120 x 65,new,not yet sourced,not yet sourced
+HW-M10-PIV,M10 elevation pivot bolt,2,steel,purchase,hardware,0.068,110 x 10 x 10,new,not yet sourced,not yet sourced
+HW-M8-LOCK,M8 elevation clamp bolt,1,steel,purchase,hardware,0.032,80 x 8 x 8,new,not yet sourced,not yet sourced
+HW-M10-AZ,M10 azimuth pivot bolt,1,steel,purchase,hardware,0.062,100 x 10 x 10,new,not yet sourced,not yet sourced

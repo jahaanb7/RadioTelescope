@@ -1,0 +1,70 @@
+# Single authoritative parameter file for the 1 m hydrogen-line radio telescope.
+# Every value carries a status: confirmed | calculated | assumed | requires_measurement
+# "confirmed" here means confirmed against the supplied CAD export, NOT against the
+# physical wood. Lengths in mm. See ../inputs_and_assumptions.md.
+
+rib:
+  count: {value: 18, status: confirmed, source: "brief section 1"}
+  reference_stl: {value: "inputs/Wood_Rib_Frame.stl", status: confirmed, source: "supplied rib export; path relative to the repository root"}
+  radius_R: {value: 500.0, status: confirmed, source: "STL bbox X = -500..0"}
+  depth_d: {value: 156.0, status: confirmed, source: "STL bbox Z = 0..156"}
+  profile_shape: {value: parabola, status: confirmed, source: "49 STL top-edge vertices match z=r^2/(4f) within 0.0001 mm"}
+  focal_length_f: {value: 400.641, status: calculated, source: "R^2/(4d)"}
+  outline_line_width: {value: 1.0, status: confirmed, source: "STL is a hollow 1 mm outline (top strip, bottom chord, rim post)"}
+  thickness_board: {value: 5.0, status: requires_measurement, source: "STL extrusion depth is 5 mm; physical board thickness not measured"}
+  body_style: {value: solid_wedge, status: assumed, source: "brief describes pointed centre end and tall rim end; STL interior is empty, so solidity is unverified"}
+  material: {value: unknown, status: requires_measurement, source: "not supplied"}
+
+centre_joint:
+  untrimmed_overlap_radius: {value: 14.62, status: calculated, source: "cad/build_ribs.py solid intersection, 5 mm board"}
+  tip_relief_radius_candidate: {value: 60.0, status: assumed, source: "PROVISIONAL; needs owner decision (brief sections 1 and 4)"}
+  hub_disc_radius: {value: 200.0, status: assumed, source: "provisional; reaches r=170 where the rib is 18 mm tall and can be clamped"}
+
+frame:
+  rear_plate_thickness: {value: 12.0, status: assumed, source: "provisional plywood thickness"}
+  rim_ring_radial_width: {value: 60.0, status: assumed, source: "provisional; to be segmented and jointed"}
+
+reflector:
+  surface_rms_target: {value: 5.0, status: assumed, source: "brief section 6 preliminary objective"}
+  mesh_opening_candidate_range: {value: [6.0, 10.0], status: assumed, source: "brief section 5; not yet evaluated"}
+
+rf:
+  hydrogen_line_mhz: {value: 1420.405751, status: confirmed, source: "brief; physical constant"}
+  wavelength_mm: {value: 211.061, status: calculated, source: "c / f"}
+  rim_half_angle_deg: {value: 63.93, status: calculated, source: "2*atan(R/(2f))"}
+
+# ---- Stage 3 provisional assembly. Every value below is assumed unless stated. ----
+assembly:
+  rib_slot_clearance: {value: 0.4, status: assumed, source: "total slot width = board + this; confirm with print/FIT-COUPON"}
+  saddle_a_radius: {value: 170.0, status: assumed, source: "inner rib clamp on hub disc"}
+  saddle_b_radius: {value: 470.0, status: assumed, source: "outer rib clamp on rim ring"}
+  spar_section: {value: [20.0, 45.0], status: assumed, source: "width x height softwood, 6 off under plates"}
+  batten_radii: {value: [300.0, 492.0], status: assumed, source: "straight mesh-support battens between ribs"}
+  batten_section: {value: [10.0, 20.0], status: assumed, source: "radial x height"}
+  mesh_inner_radius: {value: 60.0, status: assumed, source: "equals tip relief"}
+  mesh_areal_mass_kg_m2: {value: 0.67, status: assumed, source: "screening value for 6 mm opening, 0.6 mm steel wire; replace with chosen mesh data"}
+
+feed:
+  type: {value: "circular waveguide can, single probe", status: assumed, source: "provisional baseline; feed not yet selected or owned"}
+  can_diameter: {value: 150.0, status: assumed, source: "about 0.71 wavelengths; must match the real can"}
+  can_length: {value: 280.0, status: assumed, source: "about 0.75 guide wavelengths for 150 mm diameter"}
+  can_wall: {value: 0.5, status: assumed, source: "sheet steel can"}
+  phase_centre_offset_from_aperture: {value: 0.0, status: requires_measurement, source: "assumed at aperture plane; unverified"}
+  axial_travel: {value: 25.0, status: assumed, source: "brief section 5 provisional, each way"}
+  plate_offsets_above_focus: {value: [60.0, 200.0], status: assumed, source: "two plywood feed rings"}
+  strut_section: {value: 18.0, status: assumed, source: "square softwood, 3 legs"}
+
+mount:
+  pivot_height_above_rocker: {value: 560.0, status: assumed, source: "clears the 525 mm dish swing radius"}
+  upright_section: {value: [90.0, 45.0], status: assumed, source: "softwood 2x4 nominal"}
+  rocker_board: {value: [400.0, 1200.0, 18.0], status: assumed, source: "plywood"}
+  ground_disc_radius: {value: 250.0, status: assumed, source: "plywood"}
+  leg_length: {value: 700.0, status: assumed, source: "3 softwood legs; feet at 760 mm radius"}
+  electronics_box: {value: [120.0, 180.0, 65.0], status: assumed, source: "envelope only; contents not selected"}
+  electronics_mass_kg: {value: 1.0, status: assumed, source: "Pi 5, SDR, SSD, box"}
+
+densities_kg_m3:
+  plywood: {value: 600.0, status: assumed, source: "generic; not measured"}
+  softwood: {value: 480.0, status: assumed, source: "generic; not measured"}
+  printed: {value: 1000.0, status: assumed, source: "PETG at partial infill; not measured"}
+  steel: {value: 7850.0, status: confirmed, source: "handbook"}
