@@ -1,18 +1,18 @@
 # Graph Report - RadioTelescope  (2026-11-10)
 
 ## Corpus Check
-- 4 files · ~25,707 words
+- 5 files · ~31,416 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 83 file(s) not represented in the graph (top: .step 42, .stl 29, .csv 5)
-- WARNING: 83 of 102 files seen (81%) have no supported extractor and are missing from this graph entirely. It may look complete while representing only part of the codebase.
+- Unclassified: 84 file(s) not represented in the graph (top: .step 42, .stl 29, .csv 6)
+- WARNING: 84 of 149 files seen (56%) have no supported extractor and are missing from this graph entirely. It may look complete while representing only part of the codebase.
 
 ## Summary
-- 604 nodes · 867 edges · 62 communities (60 shown, 2 thin omitted)
+- 616 nodes · 898 edges · 63 communities (61 shown, 2 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 2 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `84b25770`
+- Built from commit: `62694fd0`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -22,7 +22,7 @@
 - feed_can
 - mount
 - build_dish
-- build.py
+- build_ribs.py
 - petg
 - softwood
 - hub_disc_radius
@@ -79,6 +79,7 @@
 - rim_hole_z
 - thickness_board
 - tip_relief_radius
+- print_prep.py
 
 ## God Nodes (most connected - your core abstractions)
 1. `build_dish()` - 26 edges
@@ -93,15 +94,17 @@
 10. `mount` - 14 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `export_all()` --calls--> `zpar()`  [EXTRACTED]
-  cad/build.py → cad/build.py  _Bridges community 4 → community 5_
 - `run()` --calls--> `math`  [EXTRACTED]
   cad/fusion/telescope_joints/telescope_joints.py →   _Bridges community 17 → community 4_
+- `rotation_to_down()` --calls--> `numpy`  [EXTRACTED]
+  cad/print_prep.py →   _Bridges community 62 → community 4_
+- `build_outline_rib()` --calls--> `numpy`  [EXTRACTED]
+  cad/build_ribs.py →   _Bridges community 5 → community 4_
 
 ## Import Cycles
 - None detected.
 
-## Communities (62 total, 2 thin omitted)
+## Communities (63 total, 2 thin omitted)
 
 ### Community 0 - "rib"
 Cohesion: 0.40
@@ -120,12 +123,12 @@ Cohesion: 0.40
 Nodes (5): source, status, value, mount, arm_half_spread
 
 ### Community 4 - "build_dish"
-Cohesion: 0.09
-Nodes (31): add(), bar(), bay_wedge(), bolt(), build_dish(), build_mount(), bx(), collar() (+23 more)
+Cohesion: 0.06
+Nodes (58): add(), analyse(), lumped(), bar(), bay_wedge(), bb_overlap(), bolt(), build_dish() (+50 more)
 
-### Community 5 - "build.py"
-Cohesion: 0.07
-Nodes (36): analyse(), lumped(), bb_overlap(), dish_drop(), dish_points(), export_all(), scene(), stage_assy() (+28 more)
+### Community 5 - "build_ribs.py"
+Cohesion: 0.16
+Nodes (9): array(), build_outline_rib(), extrude_profile(), load_params(), main(), pair_overlaps(), parabola(), stl_stats() (+1 more)
 
 ### Community 6 - "petg"
 Cohesion: 0.05
@@ -343,6 +346,10 @@ Nodes (4): thickness_board, source, status, value
 Cohesion: 0.50
 Nodes (4): tip_relief_radius, source, status, value
 
+### Community 62 - "print_prep.py"
+Cohesion: 0.25
+Nodes (7): estimate(), fits(), flat_footprint(), main(), orient(), rotation_to_down(), score()
+
 ## Knowledge Gaps
 - **2 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -350,16 +357,16 @@ Nodes (4): tip_relief_radius, source, status, value
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `dish` connect `dish` to `rim_diagonal_width`, `rim_panel_radial`, `sector_thickness`, `spacer_flange_r`, `spacer_section`, `trunnion_block`, `hub_disc_radius`, `parameters.yaml`, `elevation_range`, `flange_r_range`, `flange_thickness`, `hub_floor`, `hub_ring`, `hub_wall`, `keeper_bolt_radius`, `keeper_ring`, `lock_radius`, `rim_chord_height`?**
-  _High betweenness centrality (0.168) - this node is a cross-community bridge._
+  _High betweenness centrality (0.162) - this node is a cross-community bridge._
 - **Should `tolerances` be split into smaller, more focused modules?**
   _Cohesion score 0.04878048780487805 - nodes in this community are weakly interconnected._
 - **Why does `rib` connect `rib` to `drill_clearance`, `focal_length_f`, `parameters.yaml`, `material`, `mid_hole_radius`, `mid_hole_z`, `count`, `depth_d`, `outline_line_width`, `profile_shape`, `radius_R`, `reference_stl`, `rim_hole_radius`, `rim_hole_z`, `thickness_board`, `tip_relief_radius`?**
-  _High betweenness centrality (0.151) - this node is a cross-community bridge._
+  _High betweenness centrality (0.145) - this node is a cross-community bridge._
 - **Should `feed_can` be split into smaller, more focused modules?**
   _Cohesion score 0.08 - nodes in this community are weakly interconnected._
 - **Why does `mount` connect `mount` to `feed_socket_depth`, `parameters.yaml`, `foot_radius`, `foot_node_bottom`, `ground_leg_angles`, `pivot_clearance`, `plate_disc_diameter`, `plate_disc_thickness`, `socket_bolts_from_mouth`, `brace_offset`, `socket_depth`, `socket_floor`, `socket_wall`?**
-  _High betweenness centrality (0.124) - this node is a cross-community bridge._
+  _High betweenness centrality (0.120) - this node is a cross-community bridge._
 - **Should `build_dish` be split into smaller, more focused modules?**
-  _Cohesion score 0.09096045197740113 - nodes in this community are weakly interconnected._
-- **Should `build.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.06778846153846153 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06053683609366076 - nodes in this community are weakly interconnected._
+- **Should `petg` be split into smaller, more focused modules?**
+  _Cohesion score 0.05405405405405406 - nodes in this community are weakly interconnected._

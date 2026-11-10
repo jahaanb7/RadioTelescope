@@ -4,7 +4,7 @@
   "2": "feed_can",
   "3": "mount",
   "4": "build_dish",
-  "5": "build.py",
+  "5": "build_ribs.py",
   "6": "petg",
   "7": "softwood",
   "8": "hub_disc_radius",
@@ -60,5 +60,6 @@
   "58": "rim_hole_radius",
   "59": "rim_hole_z",
   "60": "thickness_board",
-  "61": "tip_relief_radius"
+  "61": "tip_relief_radius",
+  "62": "print_prep.py"
 }

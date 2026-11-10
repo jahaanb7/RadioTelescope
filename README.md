@@ -7,21 +7,28 @@ A 1 m prime-focus dish for 1420 MHz built from 18 existing plywood ribs, straigh
 printed parts (Prusa CORE One L), on an alt-azimuth fork mount. The specification is
 `Radio_Telescope_Claude_Code_Master_Prompt.md`; design decisions are in `design_brief.md`.
 
-![Rev C at elevation 45 deg](drawings/view_iso_el45.png)
+![Rev C at elevation 45 deg](images/assembly_iso_el45.png)
 
 ## Key numbers (from `analysis/assembly_report.md`)
 
 | | |
 |---|---|
 | Motion | Azimuth unlimited (lazy-susan bearing, M10 kingpin); elevation −5° to 90° (608 bearings, M8 axle) |
-| Axle height | 720 mm; the dish centre of mass is 1.1 mm from the axle, so it stays where you leave it |
-| Mass | 15.0 kg total: dish 6.7, turning base 5.8, fixed stand 2.5 |
-| PETG | about 6.7 kg (24 part types plus the coupon and two jigs), every part fits the 300 × 300 × 330 bed |
+| Axle height | 722 mm; the dish centre of mass is 1.1 mm from the axle, so it stays where you leave it |
+| Mass | 14.5 kg total: dish 6.2, turning base 5.8, fixed stand 2.5 |
+| PETG | about 7.2 kg, about 235 h of printing (24 part types plus the coupon and two jigs); every part fits the 300 × 300 × 330 bed |
 | Wood | the 18 ribs plus 8.4 m of batten (19×38, 19×64, 19×19), 16 pieces |
 | Hardware | 494 bolts, nuts and washers (M4, M6, M8, M10), four 608 bearings, one 6 in lazy susan |
 | Checks | 601 solids, 0 invalid, 0 clashes (parts, every fastener, elevation sweep every 5°, azimuth sweep every 15°) |
 | Strength | worst batten 4.0 MPa against 10; worst joint 92 % (ground-leg socket under a 50 N side push) |
 | Wind | stable to about 8 m/s with no ballast; 1.5 kg per foot for 10 m/s, 4.4 kg for 12 m/s |
+
+## Build documentation
+
+- [docs/assembly_guide.md](docs/assembly_guide.md): step-by-step assembly with pictures
+- [docs/printing.md](docs/printing.md): print settings, supports and time for every part
+- [docs/shopping_list.md](docs/shopping_list.md): everything to buy
+- `images/`: renders of the assembly, motion range, build stages and every part
 
 ## Open it in Fusion 360 with working joints
 
@@ -65,9 +72,11 @@ All dimensions come from `cad/parameters.yaml`, and each value there is tagged w
 | `exports/telescope_revC_az0_el45.step` | Full assembly: fixed_stand / turning_base / dish, 601 solids |
 | `exports/stages/` | The three stages at home pose (az 0, el 90), used by the Fusion script |
 | `exports/parts/` | One STEP per part type, including the coupon and jigs |
-| `print/` | Print-oriented STLs and `print_list.csv` (quantity, grams, settings) |
+| `print/` | Bed-oriented STLs, `print_specs.csv` (settings, supports, time) and `print_list.csv` |
+| `cad/print_prep.py` | Bed orientation, support check and print-time estimate (run by `build.py`) |
 | `bom/bom.csv`, `hardware.csv`, `cut_list.csv`, `rib_modifications.csv` | Parts, fasteners, battens, rib work |
-| `drawings/` | Rib drilling template (DXF, 1:1) and PNG views |
+| `drawings/` | Rib drilling template (DXF, 1:1) |
+| `images/` | Assembly, motion and build-stage renders; `images/parts/` one per part |
 | `drawings/rib_audit/`, `exports/rib_audit/` | Rib audit outputs, including the Rev A reference skeleton |
 | `analysis/assembly_report.md` | Kinematics, interference, structural and stability results of the last run |
 | `analysis/centre_joint.md` | Centre-joint study (Rev A) |

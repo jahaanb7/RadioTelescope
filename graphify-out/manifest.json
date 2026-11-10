@@ -6,21 +6,21 @@
     "semantic_hash": ""
   },
   "cad/parameters.yaml": {
-    "mtime": 1794309916.2018116,
-    "seen": 1794319019.753791,
-    "ast_hash": "f3121b7e083a67e9929d54cc11a9c8f2",
+    "mtime": 1794319440.473912,
+    "seen": 1794322377.5947578,
+    "ast_hash": "2076abcbe0a47ef1d515f4b019062d88",
     "semantic_hash": ""
   },
   "cad/build.py": {
-    "mtime": 1794318990.9949064,
-    "seen": 1794319019.75378,
-    "ast_hash": "a979ed810190e4244818f08b022b9cf7",
+    "mtime": 1794320381.979851,
+    "seen": 1794322377.594746,
+    "ast_hash": "8ffcbd426a3f1b07b9415eed41afe278",
     "semantic_hash": ""
   },
   "cad/fusion/telescope_joints/telescope_joints.py": {
-    "mtime": 1794318957.2219942,
-    "seen": 1794319019.753789,
-    "ast_hash": "876a8382d1513f5687a677ff5d546bbf",
+    "mtime": 1794322347.4989746,
+    "seen": 1794322377.5947561,
+    "ast_hash": "a273bfb8531e98c082b5cc8975e35f58",
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
@@ -30,9 +30,9 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1794319013.3544385,
-    "seen": 1794319019.753794,
-    "ast_hash": "25be66b8c41456f8fc5e0dbff15eb2d1",
+    "mtime": 1794322375.6178963,
+    "seen": 1794322377.594764,
+    "ast_hash": "3425049bc7d40cbf0c88cd178e94544f",
     "semantic_hash": ""
   },
   "Radio_Telescope_Claude_Code_Master_Prompt.md": {
@@ -42,21 +42,21 @@
     "semantic_hash": ""
   },
   "analysis/assembly_report.md": {
-    "mtime": 1794318971.6306381,
-    "seen": 1794319019.753797,
-    "ast_hash": "3f2135932603c2ff65c0c7c1ec8e6f09",
+    "mtime": 1794322347.4999704,
+    "seen": 1794322377.594767,
+    "ast_hash": "c82a4ff6829a90f568d23f137127066a",
     "semantic_hash": ""
   },
   "analysis/centre_joint.md": {
-    "mtime": 1794271654.1223938,
-    "seen": 1794319019.7537978,
-    "ast_hash": "bb9b48424a81b1da290d5d526f30916b",
+    "mtime": 1794319451.6711488,
+    "seen": 1794322377.594769,
+    "ast_hash": "be9ec8dca7db084577edf9645f4e2f33",
     "semantic_hash": ""
   },
   "analysis/rib_build_report.txt": {
-    "mtime": 1794311999.6102498,
-    "seen": 1794319019.753799,
-    "ast_hash": "987538dfdb647edeace2fbe12863ed42",
+    "mtime": 1794319462.508309,
+    "seen": 1794322377.59477,
+    "ast_hash": "a51b12b40a9a9286d006b1fad27e4fc9",
     "semantic_hash": ""
   },
   "design_brief.md": {
@@ -66,9 +66,9 @@
     "semantic_hash": ""
   },
   "inputs_and_assumptions.md": {
-    "mtime": 1794312032.6808836,
-    "seen": 1794319019.753802,
-    "ast_hash": "0c54b41adb4c4f6c811a552bf700e1f6",
+    "mtime": 1794319451.6700099,
+    "seen": 1794322377.594777,
+    "ast_hash": "0e6d1c31e05979a5e7e4c9083bf55d24",
     "semantic_hash": ""
   },
   "requirements.txt": {
@@ -77,40 +77,316 @@
     "ast_hash": "5c96330df105d3bfa9a3e8c8258eab8a",
     "semantic_hash": ""
   },
-  "drawings/view_front_el45.png": {
-    "mtime": 1794318399.8535619,
-    "seen": 1794319019.7538052,
-    "ast_hash": "bfda81cf954a91d01cfa4ecacfe566ba",
+  "cad/print_prep.py": {
+    "mtime": 1794320330.7093086,
+    "seen": 1794322377.59476,
+    "ast_hash": "c185e47c1174880502d3be23dba3f776",
     "semantic_hash": ""
   },
-  "drawings/view_iso_el45.png": {
-    "mtime": 1794312856.479747,
-    "seen": 1794319019.753806,
-    "ast_hash": "067163fe83b79628bc341c46102902bc",
+  "docs/assembly_guide.md": {
+    "mtime": 1794320475.810804,
+    "seen": 1794322377.594773,
+    "ast_hash": "d38a399577380663eb388bbfbe64bb87",
     "semantic_hash": ""
   },
-  "drawings/view_iso_zenith.png": {
-    "mtime": 1794314518.8945427,
-    "seen": 1794319019.753807,
-    "ast_hash": "80637824c63e779d9618cccbda922b3a",
+  "docs/printing.md": {
+    "mtime": 1794322354.1301835,
+    "seen": 1794322377.594775,
+    "ast_hash": "078dc15b76940147676443b067dc3dbc",
     "semantic_hash": ""
   },
-  "drawings/view_mount_only.png": {
-    "mtime": 1794318957.2130873,
-    "seen": 1794319019.7538078,
-    "ast_hash": "3ca6840e290600578d222b1a6d253e7c",
+  "docs/shopping_list.md": {
+    "mtime": 1794320498.9611962,
+    "seen": 1794322377.5947762,
+    "ast_hash": "956399174d71f05093a78574f028f04c",
     "semantic_hash": ""
   },
-  "drawings/view_side_el0.png": {
-    "mtime": 1794318264.4189563,
-    "seen": 1794319019.75381,
-    "ast_hash": "7f63bc3b8f38859e7b5d07e5a66404b7",
+  "images/assembly_front_el45.png": {
+    "mtime": 1794321823.255434,
+    "seen": 1794322377.59478,
+    "ast_hash": "05862cbf56fcbc3879bf3f0cbde3053b",
     "semantic_hash": ""
   },
-  "drawings/view_top_zenith.png": {
-    "mtime": 1794318932.9232771,
-    "seen": 1794319019.753811,
-    "ast_hash": "c909dcca52342b4d13012ca6deb3aceb",
+  "images/assembly_iso_el45.png": {
+    "mtime": 1794321634.8027756,
+    "seen": 1794322377.594781,
+    "ast_hash": "eece82f05fdb6b7eb4754547378a23d8",
+    "semantic_hash": ""
+  },
+  "images/assembly_iso_zenith.png": {
+    "mtime": 1794321697.5245044,
+    "seen": 1794322377.594783,
+    "ast_hash": "cab05f0ab0e6ef6d2a545394702f4473",
+    "semantic_hash": ""
+  },
+  "images/assembly_rear_el20.png": {
+    "mtime": 1794321948.539132,
+    "seen": 1794322377.594784,
+    "ast_hash": "b783b5580cafeabc94b87bca1a5b1a83",
+    "semantic_hash": ""
+  },
+  "images/assembly_side_el0.png": {
+    "mtime": 1794321760.1802928,
+    "seen": 1794322377.594785,
+    "ast_hash": "9b3e0219c43528212257cbe20970fd3d",
+    "semantic_hash": ""
+  },
+  "images/assembly_top_zenith.png": {
+    "mtime": 1794321885.372765,
+    "seen": 1794322377.5947862,
+    "ast_hash": "5adcedf3af072c469fa2ad450802328e",
+    "semantic_hash": ""
+  },
+  "images/motion_el30.png": {
+    "mtime": 1794322072.3262932,
+    "seen": 1794322377.594788,
+    "ast_hash": "4ce41244628c52e926728d9f50b11161",
+    "semantic_hash": ""
+  },
+  "images/motion_el60.png": {
+    "mtime": 1794322135.0436077,
+    "seen": 1794322377.594789,
+    "ast_hash": "c4173b77ff5990f0e25e5b59d0b5c18a",
+    "semantic_hash": ""
+  },
+  "images/motion_el90.png": {
+    "mtime": 1794322197.4922526,
+    "seen": 1794322377.59479,
+    "ast_hash": "24057f0a653e196a110421fa2069ec74",
+    "semantic_hash": ""
+  },
+  "images/motion_el_minus5.png": {
+    "mtime": 1794322010.2682803,
+    "seen": 1794322377.594792,
+    "ast_hash": "8cb2ed916c53e10889fb7ce89402be89",
+    "semantic_hash": ""
+  },
+  "images/parts/AZB-01.png": {
+    "mtime": 1794322331.0893102,
+    "seen": 1794322377.5947928,
+    "ast_hash": "5b303652ae3c0449e471b48950f368c5",
+    "semantic_hash": ""
+  },
+  "images/parts/AZT-01.png": {
+    "mtime": 1794322330.4380522,
+    "seen": 1794322377.594794,
+    "ast_hash": "4acf2c34d60a934274d92fd9c805f45c",
+    "semantic_hash": ""
+  },
+  "images/parts/EBOX-01.png": {
+    "mtime": 1794322331.8587484,
+    "seen": 1794322377.594795,
+    "ast_hash": "97b152655abcf159714ad789578a632b",
+    "semantic_hash": ""
+  },
+  "images/parts/EBOX-02.png": {
+    "mtime": 1794322332.044957,
+    "seen": 1794322377.594796,
+    "ast_hash": "edb096192bdd39af695914cccdd905ae",
+    "semantic_hash": ""
+  },
+  "images/parts/ELS-01.png": {
+    "mtime": 1794322326.4781897,
+    "seen": 1794322377.594798,
+    "ast_hash": "1b19134780165ee5525c9bbbaccf904b",
+    "semantic_hash": ""
+  },
+  "images/parts/FIT-01.png": {
+    "mtime": 1794322333.2712083,
+    "seen": 1794322377.594799,
+    "ast_hash": "c47e721ca0fbb4d37fa4754b9dcda295",
+    "semantic_hash": ""
+  },
+  "images/parts/FKC-01.png": {
+    "mtime": 1794322328.5052881,
+    "seen": 1794322377.5948002,
+    "ast_hash": "91c27a483f3a655f5cc7fd3fc3ddb38f",
+    "semantic_hash": ""
+  },
+  "images/parts/FKC-02.png": {
+    "mtime": 1794322328.9997125,
+    "seen": 1794322377.594801,
+    "ast_hash": "c743e28d4a793db6720a213abbbb8e5f",
+    "semantic_hash": ""
+  },
+  "images/parts/FKT-01.png": {
+    "mtime": 1794322327.3785884,
+    "seen": 1794322377.594802,
+    "ast_hash": "86fa9431912c373029eb424770702301",
+    "semantic_hash": ""
+  },
+  "images/parts/FKT-02.png": {
+    "mtime": 1794322327.774567,
+    "seen": 1794322377.594804,
+    "ast_hash": "477d04a8013e9e62baf73811337810ed",
+    "semantic_hash": ""
+  },
+  "images/parts/FLA-01.png": {
+    "mtime": 1794322324.2761707,
+    "seen": 1794322377.594805,
+    "ast_hash": "0b1637cdac19dbff1478f708dbdd8672",
+    "semantic_hash": ""
+  },
+  "images/parts/FOOT-01.png": {
+    "mtime": 1794322331.655235,
+    "seen": 1794322377.594806,
+    "ast_hash": "539173937dd160fe63fabd37cdd47229",
+    "semantic_hash": ""
+  },
+  "images/parts/FRG-01.png": {
+    "mtime": 1794322325.0867932,
+    "seen": 1794322377.5948071,
+    "ast_hash": "9aa4f6e78da6b5ac8e19adc1d49183dc",
+    "semantic_hash": ""
+  },
+  "images/parts/HUB-01.png": {
+    "mtime": 1794322321.3982165,
+    "seen": 1794322377.594808,
+    "ast_hash": "b8646825e6f8d4e9507332258d312c5d",
+    "semantic_hash": ""
+  },
+  "images/parts/HUB-02.png": {
+    "mtime": 1794322321.6837842,
+    "seen": 1794322377.59481,
+    "ast_hash": "4216f0e528b5cead99b3f7ee0c062d5b",
+    "semantic_hash": ""
+  },
+  "images/parts/JIG-01.png": {
+    "mtime": 1794322333.4908488,
+    "seen": 1794322377.594811,
+    "ast_hash": "47ab1b66234882b1aa69db576bfa9f65",
+    "semantic_hash": ""
+  },
+  "images/parts/JIG-02.png": {
+    "mtime": 1794322333.7445376,
+    "seen": 1794322377.594812,
+    "ast_hash": "9aae4711ac61b56f673886263e32a477",
+    "semantic_hash": ""
+  },
+  "images/parts/KNB-01.png": {
+    "mtime": 1794322328.0074837,
+    "seen": 1794322377.594814,
+    "ast_hash": "6296951543128c13995c6861f9b14014",
+    "semantic_hash": ""
+  },
+  "images/parts/KNB-02.png": {
+    "mtime": 1794322331.3249383,
+    "seen": 1794322377.594815,
+    "ast_hash": "740e942f1e6213b360df91a05e2abb03",
+    "semantic_hash": ""
+  },
+  "images/parts/LEG-A.png": {
+    "mtime": 1794322329.187437,
+    "seen": 1794322377.594816,
+    "ast_hash": "676d75bc5c47c929488fb44dddab4242",
+    "semantic_hash": ""
+  },
+  "images/parts/LEG-F.png": {
+    "mtime": 1794322324.4485738,
+    "seen": 1794322377.594817,
+    "ast_hash": "9d8da6a40dbb20c840a8f3cd320941da",
+    "semantic_hash": ""
+  },
+  "images/parts/LEG-G.png": {
+    "mtime": 1794322329.759763,
+    "seen": 1794322377.594818,
+    "ast_hash": "5c640bf1e765eb14c69aa68b7529e25f",
+    "semantic_hash": ""
+  },
+  "images/parts/LNA-01.png": {
+    "mtime": 1794322325.291712,
+    "seen": 1794322377.594819,
+    "ast_hash": "36437d17335e4007de39dbdeb9702a35",
+    "semantic_hash": ""
+  },
+  "images/parts/LNA-02.png": {
+    "mtime": 1794322325.4835484,
+    "seen": 1794322377.59482,
+    "ast_hash": "2316f01b2262041f5c4e61b36c35a775",
+    "semantic_hash": ""
+  },
+  "images/parts/RIB.png": {
+    "mtime": 1794322317.4030125,
+    "seen": 1794322377.594822,
+    "ast_hash": "cd2f17db25b83c19cbd3ebb570910105",
+    "semantic_hash": ""
+  },
+  "images/parts/RIM-01.png": {
+    "mtime": 1794322322.4837077,
+    "seen": 1794322377.594823,
+    "ast_hash": "1e76dc989c2ed4139e96aa9086b37391",
+    "semantic_hash": ""
+  },
+  "images/parts/RIM-T.png": {
+    "mtime": 1794322323.5053444,
+    "seen": 1794322377.5948238,
+    "ast_hash": "bf2df0a43db6ddb078f0c3d12a285b8e",
+    "semantic_hash": ""
+  },
+  "images/parts/SIL-01.png": {
+    "mtime": 1794322329.5721855,
+    "seen": 1794322377.594825,
+    "ast_hash": "82e62afe653b7836ccec733aac3776d8",
+    "semantic_hash": ""
+  },
+  "images/parts/SPC-01.png": {
+    "mtime": 1794322323.8708205,
+    "seen": 1794322377.594826,
+    "ast_hash": "53d426acf69d299574eb97c6fe6a15dc",
+    "semantic_hash": ""
+  },
+  "images/parts/SPK-01.png": {
+    "mtime": 1794322329.3740544,
+    "seen": 1794322377.594827,
+    "ast_hash": "d0f72f63d80ed99a71472df9103f0fdb",
+    "semantic_hash": ""
+  },
+  "images/parts/SPR-01.png": {
+    "mtime": 1794322326.7874436,
+    "seen": 1794322377.5948281,
+    "ast_hash": "2b38b29b732decb24a27d3b95a20f5c2",
+    "semantic_hash": ""
+  },
+  "images/parts/SPR-02.png": {
+    "mtime": 1794322326.957303,
+    "seen": 1794322377.59483,
+    "ast_hash": "b33ca75d19e174bb890bf2f633410062",
+    "semantic_hash": ""
+  },
+  "images/parts/SPR-03.png": {
+    "mtime": 1794322326.634206,
+    "seen": 1794322377.594831,
+    "ast_hash": "15a216a4698cf8e6f1fa2d4247f9bd0d",
+    "semantic_hash": ""
+  },
+  "images/stage1_fixed_stand.png": {
+    "mtime": 1794322202.0332007,
+    "seen": 1794322377.594832,
+    "ast_hash": "1faf31ad0bb6a138d02f339240e27d70",
+    "semantic_hash": ""
+  },
+  "images/stage2_turning_base.png": {
+    "mtime": 1794322218.785488,
+    "seen": 1794322377.5948339,
+    "ast_hash": "4b66517dace1d17c787b8fb1665f5922",
+    "semantic_hash": ""
+  },
+  "images/stage3a_ribs_hub.png": {
+    "mtime": 1794322228.5537124,
+    "seen": 1794322377.594835,
+    "ast_hash": "f9d072805db3e3a61a31b5cf420239ef",
+    "semantic_hash": ""
+  },
+  "images/stage3b_dish_frame.png": {
+    "mtime": 1794322271.607099,
+    "seen": 1794322377.594836,
+    "ast_hash": "8109bd2b4c27fbdb7ade9a7761f26078",
+    "semantic_hash": ""
+  },
+  "images/stage3c_dish_complete.png": {
+    "mtime": 1794322316.959201,
+    "seen": 1794322377.594837,
+    "ast_hash": "767b28dddc9b49a590aa0e829b376273",
     "semantic_hash": ""
   }
 }

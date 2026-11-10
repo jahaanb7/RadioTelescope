@@ -1,0 +1,28 @@
+part,name,qty,size_mm,fits_bed,perimeters,infill,top_bottom_layers,supports,brim,grams_each,hours_each,grams_total,hours_total,notes
+AZB-01,fixed turntable plate with three ground-leg sockets,1,220 x 227 x 79,yes,5,30% gyroid,5,"yes, build plate only (286 cm2 of overhang)",no,542,16.8,542,16.8,Supports only under the 1.5 mm lazy-susan recess. Check the M10 kingpin head drops into its hex pocket.
+AZT-01,rotating turntable plate with four spoke sockets,1,220 x 222 x 79,yes,5,30% gyroid,5,"yes, build plate only (303 cm2 of overhang)",no,627,19.5,627,19.5,"Supports only under the 1.5 mm lazy-susan recess (use a support enforcer there); the plate must sit flat on the bearing, so clean the recess floor."
+EBOX-01,"electronics enclosure body (envelope: Pi 5, SDR, SSD)",1,150 x 110 x 60,yes,4,25% gyroid,5,none,no,155,5.1,155,5.1,
+EBOX-02,electronics enclosure lid,1,150 x 110 x 6,yes,4,25% gyroid,5,none,no,89,2.7,89,2.7,
+ELS-01,elevation lock sector (+Y trunnion),1,130 x 113 x 6,yes,5,40% gyroid,6,none,no,66,2.1,66,2.1,Lock sector: clamped by the knob; 100 % infill is fine if you have time.
+FIT-01,"fit coupon (bores, slots, sockets, nut pockets)",1,236 x 128 x 16,yes,4,25% gyroid,5,none,no,183,5.7,183,5.7,PRINT THIS FIRST with exactly the settings and filament you will use for the real parts.
+FKC-01,base corner node x+ y+,2,124 x 140 x 140,yes,5,30% gyroid,5,"yes, build plate only (61 cm2 of overhang)",no,251,8.1,502,16.3,Socket walls carry the fork; do not reduce perimeters.
+FKC-02,base corner node x+ y-,2,124 x 140 x 140,yes,5,30% gyroid,5,"yes, build plate only (61 cm2 of overhang)",no,251,8.1,502,16.3,Socket walls carry the fork; do not reduce perimeters.
+FKT-01,"fork top node +Y (fixed bearing fit, lock lug)",1,101 x 120 x 47,yes,6,40% gyroid,6,"yes, build plate only (34 cm2 of overhang)",no,185,6.0,185,6.0,"Bearing bores must print vertical (kept). Press the 608s in with a vice, not a hammer."
+FKT-02,fork top node -Y (floating bearing fit),1,100 x 120 x 45,yes,6,40% gyroid,6,"yes, build plate only (34 cm2 of overhang)",no,133,4.3,133,4.3,Bearing bores must print vertical (kept). Slip fit: the bearing should slide in by hand.
+FLA-01,feed-leg anchor 60 deg,3,172 x 56 x 208,yes,4,25% gyroid,5,"yes, build plate only (45 cm2 of overhang)",5 mm,101,3.9,304,11.7,"Tall: brim 5 mm, slow the top 30 mm if it wobbles."
+FOOT-01,"foot node 0 deg (levelling bolt, ballast eye)",3,141 x 34 x 71,yes,5,30% gyroid,5,"yes, build plate only (24 cm2 of overhang)",no,130,4.3,391,12.9,"M10 nut pocket: pause at the layer above the pocket and drop the nut in, or press it in later."
+FRG-01,"feed collar (split, three leg sockets, LNA shelf)",1,260 x 220 x 58,yes,4,25% gyroid,5,"yes, build plate only (79 cm2 of overhang)",no,206,6.5,206,6.5,
+HUB-01,hub with 18 rib channels,1,280 x 280 x 15,yes,5,30% gyroid,5,none,5 mm,233,7.3,233,7.3,"Large flat part: brim 5 mm, clean bed, 0.2 mm first layer."
+HUB-02,keeper ring (clamps rib tips and mesh centre),1,280 x 280 x 6,yes,4,25% gyroid,5,"yes, build plate only (5 cm2 of overhang)",5 mm,88,2.8,88,2.8,"Flat top on the bed, curved mesh face up; brim 5 mm."
+JIG-01,"drill jig, rim-end holes",1,16 x 115 x 51,yes,4,25% gyroid,5,none,5 mm,70,2.3,70,2.3,"Drill guide: use a sharp 4.5 mm bit, light pressure."
+JIG-02,"drill jig, mid-span hole",1,16 x 42 x 220,yes,4,25% gyroid,5,none,5 mm,79,3.3,79,3.3,"Drill guide: use a sharp 4.5 mm bit, light pressure."
+KNB-01,elevation lock knob (captures an M6 nut),1,39 x 39 x 16,yes,4,25% gyroid,5,none,5 mm,14,0.5,14,0.5,Press an M6 nut into the hex pocket (heat it with a soldering iron if tight).
+KNB-02,azimuth friction knob (fits over the kingpin nyloc nut),1,53 x 53 x 16,yes,4,25% gyroid,5,none,no,24,0.7,24,0.7,Press the M10 nyloc nut into the hex pocket.
+LNA-01,LNA enclosure body (envelope for the chosen LNA),1,90 x 50 x 35,yes,4,25% gyroid,5,none,no,39,1.4,39,1.4,
+LNA-02,LNA enclosure lid,1,50 x 90 x 5,yes,4,25% gyroid,5,none,no,24,0.8,24,0.8,
+RIM-01,rim girder bay 10 deg,16,155 x 170 x 37,yes,4,25% gyroid,5,none,no,106,3.4,1703,53.9,Print 16. Fits two per plate.
+RIM-T,rim girder trunnion bay 90 deg,2,170 x 57 x 200,yes,5,30% gyroid,5,"yes, build plate only (34 cm2 of overhang)",5 mm,290,8.6,580,17.2,Carries the elevation axle; do not reduce perimeters.
+SPC-01,mid-span spacer bay 10 deg,18,45 x 105 x 51,yes,4,25% gyroid,5,none,5 mm,27,1.0,482,18.3,Print 18. Six per plate.
+SPR-01,axle spacer between sector and inner bearing,2,12 x 12 x 2,yes,4,100% gyroid,5,none,5 mm,0,0.0,0,0.0,"Tiny ring, print solid. An M8 washer (1.6 mm) plus a 0.5 mm shim is an alternative."
+SPR-02,axle spacer between the two bearings,2,12 x 12 x 31,yes,4,100% gyroid,5,none,5 mm,2,0.2,5,0.4,Print solid; it bears on the inner races.
+SPR-03,"axle spacer, -Y trunnion (replaces the sector thickness)",1,30 x 30 x 6,yes,4,100% gyroid,5,none,5 mm,5,0.2,5,0.2,Print solid.
