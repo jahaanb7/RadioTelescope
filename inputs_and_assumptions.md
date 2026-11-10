@@ -1,6 +1,6 @@
 # Inputs and assumptions register
 
-Revision A, 2026-11-09. Status of the whole package: **NOT RELEASED FOR FABRICATION**.
+Revision C, 2026-11-10 (register first written in Rev A, 2026-11-09). Status of the whole package: **NOT RELEASED FOR FABRICATION**.
 
 "Confirmed" below means confirmed against the supplied CAD export. Nothing has been
 confirmed against the physical wood yet.
@@ -36,10 +36,15 @@ confirmed against the physical wood yet.
 | Wood species / plywood grade | unknown | **requires measurement** | |
 | As-cut profile accuracy | unknown | **requires measurement** | |
 | Tip condition (r < 60 mm, under 2.3 mm tall) | unknown | **requires measurement** | likely fragile or already broken |
-| Tip relief radius | 60 mm | **assumed, needs owner decision** | see `analysis/centre_joint.md` |
-| Rear plate thickness, hub radius, ring width | 12 / 110 / 60 mm | assumed | placeholders, not sized |
+| Tip relief radius | 60 mm | confirmed by the owner (Rev C) | ribs are also drilled: owner approved, 2026-11-10 |
 | Reflector RMS target | 5 mm | assumed | brief; Ruze surface factor 0.915 at 21 cm |
-| Printer, tools, LNA, SDR, feed, power, budget, site | unknown | requires input | |
+| Printer | Prusa CORE One L, 300 × 300 × 330 mm | confirmed | owner; Prusa product page |
+| Filament | PETG | confirmed | owner. Interlayer strength 18 ± 4 MPa (Prusament data) |
+| Long members | softwood battens, 19 × 38 (1x2), 19 × 64 (1x3), 19 × 19 | **requires measurement** | owner chose battens; sizes are nominal |
+| Azimuth bearing | 6 in square lazy susan, 152.4 mm, 7.93 mm thick | **requires measurement** (plate thickness) | supplier data |
+| Elevation bearings | 608 (22 × 8 × 7 mm) | confirmed | standard |
+| Feed can | Ø150 × 280 mm, 0.40 kg | assumed | formula values |
+| LNA, SDR, power, budget, site | unknown | requires input | |
 
 ## Measurements needed from the physical ribs
 
@@ -48,3 +53,13 @@ confirmed against the physical wood yet.
 3. Rise above the flat bottom edge at r = 100, 200, 300, 400 and 500 mm from the pointed end, on at least three ribs. Nominal values: 6.24, 24.96, 56.16, 99.84, 156.00 mm.
 4. Overall length along the flat edge (nominal 500 mm).
 5. How far the pointed tips survive intact, and the wood type.
+
+## Measurements needed for Rev C (then rebuild with `python3 cad/build.py`)
+
+| Measure | Where it goes in `cad/parameters.yaml` | Why it matters |
+|---|---|---|
+| Rib thickness | `rib.thickness_board` | Every rib slot and flange gap |
+| Batten thickness and width (each size) | `battens.section`, `beam_section`, `feed_leg_section` | Socket bores; sockets are only 0.8 mm larger |
+| Lazy-susan overall thickness and plate size | `lazy_susan.thickness`, `size`, `plate_thickness` | Recess depth and the kingpin length |
+| Feed can diameter and length | `feed_can.diameter`, `length` | Collar bore |
+| FIT-01 results | `tolerances.*` | Printer-specific clearances |

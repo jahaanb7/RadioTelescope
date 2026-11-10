@@ -1,43 +1,56 @@
-# Design brief: provisional baseline
+# Design brief
 
-Revision B, 2026-11-09. **NOT RELEASED FOR FABRICATION.**
-Numbers quoted here come from `analysis/assembly_report.md`, which the generator rewrites on every run.
-Evidence level throughout: modelled and analytically checked. Nothing simulated, nothing physically tested.
+Revision C, 2026-11-10. **NOT RELEASED FOR FABRICATION.**
+Numbers quoted here come from `analysis/assembly_report.md`, which `cad/build.py` rewrites on every run.
+Evidence level: modelled and checked analytically (solid intersections, 3D beam frame, hand checks of joints).
+Nothing has been physically tested.
+
+## Goal of Rev C
+
+Use as little wood as possible: the 18 existing ribs plus straight softwood battens from a hardware store.
+Everything else is printed in PETG on a Prusa CORE One L (300 × 300 × 330 mm). The dish must turn in
+azimuth and tilt in elevation, and every joint is modelled with its real bolts, nuts, washers and pockets.
+
+## Architecture
+
+```
+dish (tilts about Y)          turning base (turns about Z)        fixed stand
+18 existing ribs              2 fork top nodes (608 bearings)     3 ground legs, 1x3 batten
+HUB-01 + HUB-02 keeper        4 fork legs, 1x2 batten             3 FOOT-01 (levelling bolt, ballast eye)
+16 RIM-01 + 2 RIM-T bays      2 sills 1x2, 4 spokes 1x3           AZB-01 fixed plate
+18 SPC-01 mid spacers         4 corner nodes FKC-01/02            6 in lazy-susan bearing + M10 kingpin
+3 feed legs 19x19 + FLA-01    AZT-01 turning plate, EBOX
+FRG-01 collar, feed can, LNA  ELS-01 lock sector + KNB-01 knob
+```
 
 ## Design decisions
 
-| Area | Baseline | Why | Alternative considered |
+| Area | Rev C choice | Why | Alternative considered |
 |---|---|---|---|
-| Rib datum | Ribs stand on their flat bottom edges on a rear plate plane (z = 0) | Uses the edge the ribs already have; no radial shift of the parabola | Hanging ribs from a front ring: needs a new accurate ring |
-| Centre joint | 60 mm square tip relief, printed centre disc carries the mesh | Least change to existing wood; see `analysis/centre_joint.md` | Slotted hub with 100–120 mm relief |
-| Rear structure | 400 mm plywood hub disc, six-segment rim ring with splice plates, six softwood spars | Flat parts cut from sheet; spars carry load to the trunnions | Full plywood back disc: heavier, 1 m sheet |
-| Rib retention | Printed cheek pairs at r = 170 and 470 mm, one plate screw and one cross bolt each | Clamps where the rib is 18 mm and 138 mm tall | Glue blocks: not serviceable |
-| Mesh support | Straight battens between ribs at r = 300 and 492 mm; mesh in 18 flat-ish gores | Mesh pulled straight between ribs has 0.75 mm residual RMS after refocus | Curved hoops: harder to make accurately |
-| Feed | Circular waveguide can, 150 mm, single probe, clamped in two printed collars with axial slide | Simple, common for 21 cm at f/D near 0.4 | Dipole with reflector; choke-ring can. Not yet compared quantitatively |
-| Feed support | Three 18 mm softwood legs from the rim to two plywood rings | Braced tripod; member loads are tiny | Single cantilever arm: rejected by the brief |
-| Mount | Fork with elevation pivots at the rim, through the centre of mass | Balanced, so the clamp carries little load | Rear pivot behind the dish: narrower, but needs a counterweight and a stronger lock |
-| Azimuth | Rocker board on three PTFE glides over a ground disc, centre bolt, three legs | Dobsonian-style; no bearings to buy | Lazy-susan bearing: a purchasable upgrade |
-| Electronics | LNA box on the feed head; digital box on the rocker board | Shortest RF path before the LNA; Pi noise kept away from the feed | Everything at the feed: more mass and interference at the focus |
+| Rib ring | 18 printed rim girder bays (chords, X bracing) bolted rib to rib, two of them carry the trunnions | Turns 18 loose ribs into a stiff ring and gives the axle a printed seat; every bay fits the bed | Plywood rim ring: needs a 1 m sheet and a router |
+| Centre | Printed hub with 18 slots plus a keeper ring on 6 M4 bolts | Clamps the 60 mm tip relief; no glue | Plywood disc: Rev B, heavier |
+| Mid span | 18 printed spacers through the r = 300 mm hole | Stops the ribs buckling sideways and sets the spacing for the mesh | Battens between ribs: Rev B, more wood |
+| Long members | Softwood battens in printed sockets, two cross bolts each end | Wood is stiff and cheap in length; PETG is not. Joints are bolted, so parts come apart | All-printed tubes: creep and a lot of filament |
+| Elevation | M8 axle bolts in 608 bearings, one fixed and one floating side | Balanced dish (centre of mass on the axle), smooth, cheap | Plain PETG bushings: stick-slip |
+| Elevation lock | Slotted sector with carriage bolt and knob; slot ends are the hard stops at −5° and 90° | One part does lock and limits | Separate stop blocks |
+| Azimuth | 6 in lazy-susan bearing between two printed plates, M10 kingpin with nyloc and friction knob | Bought bearing carries the load; the knob sets the drag | Rev B PTFE glides |
+| Stand | Three legs, three feet with levelling bolts and ballast eyes | Three points never rock | Four legs: needs shimming |
+| Shop aids | FIT-01 coupon, JIG-01 and JIG-02 drill jigs | Tolerances are checked before printing 6 kg; holes land in the same place on all 18 ribs | Marking by hand |
 
 ## Receiver chain (not yet specified)
 
 ```
-feed probe -> short coax -> LNA (with filter if integrated) -> coax down a feed leg and spar
-           -> SDR in the digital box -> USB -> Raspberry Pi 5 -> SSD
-power: Pi supply -> Pi; SDR via USB; LNA via bias tee or separate feed (depends on the LNA model)
+feed probe -> short coax -> LNA (in LNA-01 on the collar shelf) -> coax down a feed leg
+           -> SDR in EBOX-01 on the +Y sill -> USB -> Raspberry Pi 5 -> SSD
 ```
 
-No noise, gain or power budget has been calculated because no LNA, SDR, feed or supply has been identified.
+No noise, gain or power budget has been calculated because no LNA, SDR or feed has been chosen.
 
 ## Open items
 
-1. Rib thickness, solidity and wood type are unmeasured. They drive every slot and clamp.
-2. Tip relief needs the owner's decision.
-3. Cross-bolt holes through the ribs (M3 at r = 170, M4 at r = 470) are a second change to existing wood. They also need a decision. A friction-only clamp is the alternative.
-4. Not yet modelled: batten end clips, feed-leg end brackets, the arc slot in the elevation quadrant, elevation stops, azimuth and elevation scales, individual screws, cables and glands.
-5. The LNA and digital enclosures are envelopes only. No Raspberry Pi 5 drawing has been checked.
-6. Feed dimensions are formula values. Phase-centre position is assumed at the aperture.
-7. Mesh type is not chosen. The 0.67 kg/m² figure is a placeholder.
-8. No BOM prices or supplier links. Nothing has been sourced.
-9. Not done: dimensioned PDF drawings, exploded view, assembly guide, commissioning plan, research package.
-10. The side-view SVG crops one ground leg.
+1. Measure: rib thickness, batten sizes, lazy-susan plate thickness, feed can size. Update `cad/parameters.yaml` and rebuild.
+2. Print FIT-01 and set the slot, bore, socket and nut-pocket tolerances from it.
+3. Mesh type not chosen; mass per m² is a placeholder.
+4. Electronics enclosures are sized envelopes; no board drawings checked.
+5. Wind: ballast is needed above about 8 m/s (see the report). Do not leave it out unattended in wind.
+6. Not done: dimensioned PDF drawings, assembly guide, commissioning plan.

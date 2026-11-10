@@ -1,0 +1,35 @@
+part,name,kind,material,group,qty,kg_each,kg_total
+RIB,existing rib,existing,plywood,dish,18,0.078,1.399
+HUB-01,hub with 18 rib channels,print,petg,dish,1,0.239,0.239
+HUB-02,keeper ring (clamps rib tips and mesh centre),print,petg,dish,1,0.065,0.065
+RIM-01,rim girder bay,print,petg,dish,16,0.105,1.686
+RIM-T,rim girder trunnion bay,print,petg,dish,2,0.241,0.483
+SPC-01,mid-span spacer bay,print,petg,dish,18,0.027,0.478
+FLA-01,feed-leg anchor,print,petg,dish,3,0.101,0.304
+LEG-F,feed leg,wood,softwood,dish,3,0.080,0.239
+FRG-01,"feed collar (split, three leg sockets, LNA shelf)",print,petg,dish,1,0.206,0.206
+FEED-01,"feed can (conductive, provisional size)",purchase,steel,dish,1,0.400,0.400
+LNA-01,LNA enclosure body (envelope for the chosen LNA),print,petg,dish,1,0.120,0.120
+LNA-02,LNA enclosure lid,print,petg,dish,1,0.024,0.024
+ELS-01,elevation lock sector (+Y trunnion),print,petg,dish,1,0.055,0.055
+SPR-03,"axle spacer, -Y trunnion (replaces the sector thickness)",print,petg,dish,1,0.005,0.005
+SPR-01,axle spacer between sector and inner bearing,print,petg,dish,2,0.000,0.000
+SPR-02,axle spacer between the two bearings,print,petg,dish,2,0.002,0.005
+MESH-01,"reflector mesh, representative ideal surface",purchase,mesh,dish,1,0.575,0.575
+FKT-01,"fork top node +Y (fixed bearing fit, lock lug)",print,petg,az,1,0.151,0.151
+BRG-608,608 ball bearing 8 x 22 x 7,purchase,steel,az,4,0.012,0.048
+FKT-02,fork top node -Y (floating bearing fit),print,petg,az,1,0.124,0.124
+KNB-01,elevation lock knob (captures an M6 nut),print,petg,az,1,0.014,0.014
+FKC-01,base corner node x+ y+,print,petg,az,2,0.213,0.426
+FKC-02,base corner node x+ y-,print,petg,az,2,0.213,0.426
+LEG-A,fork leg x+ y+,wood,softwood,az,4,0.184,0.735
+SPK-01,base spoke x+ y+,wood,softwood,az,4,0.276,1.104
+SIL-01,base sill y+,wood,softwood,az,2,0.134,0.268
+LEG-G,ground leg,wood,softwood,ground,3,0.320,0.959
+AZT-01,rotating turntable plate with four spoke sockets,print,petg,az,1,0.532,0.532
+AZB-01,fixed turntable plate with three ground-leg sockets,print,petg,ground,1,0.460,0.460
+LS-6IN,6 in square lazy-susan bearing (both plates),purchase,steel,ground + az,1,0.500,0.500
+KNB-02,azimuth friction knob (fits over the kingpin nyloc nut),print,petg,ground,1,0.024,0.024
+FOOT-01,"foot node 0 deg (levelling bolt, ballast eye)",print,petg,ground,3,0.111,0.332
+EBOX-01,"electronics enclosure body (envelope: Pi 5, SDR, SSD)",print,petg,az,1,0.900,0.900
+EBOX-02,electronics enclosure lid,print,petg,az,1,0.089,0.089

@@ -1,0 +1,30 @@
+part,name,qty,grams_each,grams_total,bed_footprint_mm,settings,fits_bed
+HUB-01,hub with 18 rib channels,1,239,239,280 x 280 x 15,"5 perimeters, 30% gyroid",yes
+HUB-02,keeper ring (clamps rib tips and mesh centre),1,65,65,280 x 280 x 7,"4 perimeters, 25% gyroid",yes
+RIM-01,rim girder bay 10 deg,16,105,1686,155 x 165 x 64,"4 perimeters, 25% gyroid",yes
+RIM-T,rim girder trunnion bay 90 deg,2,241,483,200 x 57 x 168,"5 perimeters, 30% gyroid; axle pocket faces up",yes
+SPC-01,mid-span spacer bay 10 deg,18,27,478,53 x 101 x 40,"4 perimeters, 25% gyroid",yes
+FLA-01,feed-leg anchor 60 deg,3,101,304,156 x 98 x 208,"4 perimeters, 25% gyroid",yes
+FRG-01,"feed collar (split, three leg sockets, LNA shelf)",1,206,206,235 x 260 x 58,"4 perimeters, 25% gyroid",yes
+LNA-01,LNA enclosure body (envelope for the chosen LNA),1,39,39,103 x 88 x 35,"4 perimeters, 25% gyroid",yes
+LNA-02,LNA enclosure lid,1,24,24,103 x 88 x 5,"4 perimeters, 25% gyroid",yes
+ELS-01,elevation lock sector (+Y trunnion),1,55,55,114 x 141 x 6,"5 perimeters, 40% gyroid",yes
+SPR-03,"axle spacer, -Y trunnion (replaces the sector thickness)",1,5,5,30 x 30 x 6,"4 perimeters, 25% gyroid",yes
+SPR-01,axle spacer between sector and inner bearing,2,0,0,12 x 2 x 12,"4 perimeters, 25% gyroid",yes
+SPR-02,axle spacer between the two bearings,2,2,5,12 x 31 x 12,"4 perimeters, 25% gyroid",yes
+FKT-01,"fork top node +Y (fixed bearing fit, lock lug)",1,151,151,126 x 115 x 47,"6 perimeters, 40% gyroid; bearing bores print vertical",yes
+FKT-02,fork top node -Y (floating bearing fit),1,124,124,107 x 115 x 45,"6 perimeters, 40% gyroid",yes
+KNB-01,elevation lock knob (captures an M6 nut),1,14,14,42 x 42 x 16,"4 perimeters, 25% gyroid",yes
+FKC-01,base corner node x+ y+,2,213,426,124 x 140 x 140,"5 perimeters, 30% gyroid",yes
+FKC-02,base corner node x+ y-,2,213,426,124 x 140 x 140,"5 perimeters, 30% gyroid",yes
+AZT-01,rotating turntable plate with four spoke sockets,1,532,532,220 x 222 x 79,"5 perimeters, 30% gyroid",yes
+AZB-01,fixed turntable plate with three ground-leg sockets,1,460,460,227 x 220 x 79,"5 perimeters, 30% gyroid",yes
+KNB-02,azimuth friction knob (fits over the kingpin nyloc nut),1,24,24,56 x 56 x 17,"4 perimeters, 25% gyroid",yes
+FOOT-01,"foot node 0 deg (levelling bolt, ballast eye)",3,111,332,141 x 34 x 71,"5 perimeters, 30% gyroid",yes
+EBOX-01,"electronics enclosure body (envelope: Pi 5, SDR, SSD)",1,155,155,150 x 110 x 60,"4 perimeters, 25% gyroid",yes
+EBOX-02,electronics enclosure lid,1,89,89,150 x 110 x 6,"4 perimeters, 25% gyroid",yes
+FIT-01,"fit coupon (bores, slots, sockets, nut pockets)",1,183,183,236 x 128 x 16,same settings as the real parts,yes
+JIG-01,"drill jig, rim-end holes",1,71,71,51 x 115 x 17,"4 perimeters, 25% gyroid",yes
+JIG-02,"drill jig, mid-span hole",1,81,81,220 x 42 x 17,"4 perimeters, 25% gyroid",yes
+
+ALL,"PETG, 0.4 mm nozzle, 0.2 mm layers, 245/80 C, brim on tall parts",,,6660,,print FIT-01 first and update parameters.yaml tolerances,

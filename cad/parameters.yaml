@@ -1,8 +1,10 @@
-# Single authoritative parameter file for the 1 m hydrogen-line radio telescope.
+# Single authoritative parameter file for the 1 m hydrogen-line radio telescope, Rev C.
 # Every value carries a status: confirmed | calculated | assumed | requires_measurement
-# "confirmed" here means confirmed against the supplied CAD export, NOT against the
-# physical wood. Lengths in mm. See ../inputs_and_assumptions.md.
+# "confirmed" means confirmed against the supplied CAD export or a datasheet, NOT against
+# the physical wood. Lengths in mm, forces in N, stresses in MPa, masses in kg.
+# Rev C architecture: printed PETG parts + softwood battens + the 18 existing ribs.
 
+# ------------------------------------------------------------------ existing ribs
 rib:
   count: {value: 18, status: confirmed, source: "brief section 1"}
   reference_stl: {value: "inputs/Wood_Rib_Frame.stl", status: confirmed, source: "supplied rib export; path relative to the repository root"}
@@ -11,60 +13,146 @@ rib:
   profile_shape: {value: parabola, status: confirmed, source: "49 STL top-edge vertices match z=r^2/(4f) within 0.0001 mm"}
   focal_length_f: {value: 400.641, status: calculated, source: "R^2/(4d)"}
   outline_line_width: {value: 1.0, status: confirmed, source: "STL is a hollow 1 mm outline (top strip, bottom chord, rim post)"}
-  thickness_board: {value: 5.0, status: requires_measurement, source: "STL extrusion depth is 5 mm; physical board thickness not measured"}
-  body_style: {value: solid_wedge, status: assumed, source: "brief describes pointed centre end and tall rim end; STL interior is empty, so solidity is unverified"}
-  material: {value: unknown, status: requires_measurement, source: "not supplied"}
-
-centre_joint:
-  untrimmed_overlap_radius: {value: 14.62, status: calculated, source: "cad/build_ribs.py solid intersection, 5 mm board"}
-  tip_relief_radius_candidate: {value: 60.0, status: assumed, source: "PROVISIONAL; needs owner decision (brief sections 1 and 4)"}
-  hub_disc_radius: {value: 200.0, status: assumed, source: "provisional; reaches r=170 where the rib is 18 mm tall and can be clamped"}
-
-frame:
-  rear_plate_thickness: {value: 12.0, status: assumed, source: "provisional plywood thickness"}
-  rim_ring_radial_width: {value: 60.0, status: assumed, source: "provisional; to be segmented and jointed"}
-
-reflector:
-  surface_rms_target: {value: 5.0, status: assumed, source: "brief section 6 preliminary objective"}
-  mesh_opening_candidate_range: {value: [6.0, 10.0], status: assumed, source: "brief section 5; not yet evaluated"}
+  thickness_board: {value: 5.0, status: requires_measurement, source: "STL extrusion depth is 5 mm; physical board thickness not measured. Drives every rib slot and flange gap"}
+  body_style: {value: solid_wedge, status: assumed, source: "brief describes pointed centre end and tall rim end; STL interior is empty"}
+  material: {value: plywood, status: requires_measurement, source: "assumed plywood for bolt-bearing checks"}
+  tip_relief_radius: {value: 60.0, status: assumed, source: "owner approved drilling 2026-11-10; tip cut still to confirm. Hub works with any relief >= 30 mm"}
+  rim_hole_radius: {value: 474.0, status: assumed, source: "two M4 holes per rib for the rim girder joint"}
+  rim_hole_z: {value: [45.0, 95.0], status: assumed, source: "inboard of the girder panel so the bolt heads are reachable"}
+  mid_hole_radius: {value: 300.0, status: assumed, source: "one M4 hole per rib for the mid-span spacer"}
+  mid_hole_z: {value: 22.0, status: assumed, source: "rib is 56 mm tall here"}
+  drill_clearance: {value: 0.5, status: assumed, source: "4.5 mm drill for M4 in wood"}
 
 rf:
-  hydrogen_line_mhz: {value: 1420.405751, status: confirmed, source: "brief; physical constant"}
+  hydrogen_line_mhz: {value: 1420.405751, status: confirmed, source: "physical constant"}
   wavelength_mm: {value: 211.061, status: calculated, source: "c / f"}
-  rim_half_angle_deg: {value: 63.93, status: calculated, source: "2*atan(R/(2f))"}
 
-# ---- Stage 3 provisional assembly. Every value below is assumed unless stated. ----
-assembly:
-  rib_slot_clearance: {value: 0.4, status: assumed, source: "total slot width = board + this; confirm with print/FIT-COUPON"}
-  saddle_a_radius: {value: 170.0, status: assumed, source: "inner rib clamp on hub disc"}
-  saddle_b_radius: {value: 470.0, status: assumed, source: "outer rib clamp on rim ring"}
-  spar_section: {value: [20.0, 45.0], status: assumed, source: "width x height softwood, 6 off under plates"}
-  batten_radii: {value: [300.0, 492.0], status: assumed, source: "straight mesh-support battens between ribs"}
-  batten_section: {value: [10.0, 20.0], status: assumed, source: "radial x height"}
-  mesh_inner_radius: {value: 60.0, status: assumed, source: "equals tip relief"}
-  mesh_areal_mass_kg_m2: {value: 0.67, status: assumed, source: "screening value for 6 mm opening, 0.6 mm steel wire; replace with chosen mesh data"}
+# ------------------------------------------------------------------ printer and materials
+printer:
+  model: {value: "Prusa CORE One L", status: confirmed, source: "owner, 2026-11-10"}
+  build_volume: {value: [300.0, 300.0, 330.0], status: confirmed, source: "Prusa product page"}
+  bed_margin: {value: 5.0, status: assumed, source: "kept free on every side"}
 
-feed:
-  type: {value: "circular waveguide can, single probe", status: assumed, source: "provisional baseline; feed not yet selected or owned"}
-  can_diameter: {value: 150.0, status: assumed, source: "about 0.71 wavelengths; must match the real can"}
-  can_length: {value: 280.0, status: assumed, source: "about 0.75 guide wavelengths for 150 mm diameter"}
-  can_wall: {value: 0.5, status: assumed, source: "sheet steel can"}
-  phase_centre_offset_from_aperture: {value: 0.0, status: requires_measurement, source: "assumed at aperture plane; unverified"}
-  axial_travel: {value: 25.0, status: assumed, source: "brief section 5 provisional, each way"}
-  plate_offsets_above_focus: {value: [60.0, 200.0], status: assumed, source: "two plywood feed rings"}
-  strut_section: {value: 18.0, status: assumed, source: "square softwood, 3 legs"}
+petg:
+  density_solid: {value: 1270.0, status: confirmed, source: "PETG datasheets"}
+  tensile_xy: {value: 45.0, status: confirmed, source: "Prusament PETG TDS ~47-50 MPa; rounded down"}
+  tensile_z: {value: 18.0, status: confirmed, source: "Prusament PETG interlayer adhesion 18 +/- 4 MPa"}
+  modulus: {value: 1900.0, status: assumed, source: "printed PETG, typical 1.8-2.1 GPa"}
+  allow_short_xy: {value: 15.0, status: calculated, source: "tensile_xy / 3 (wind, handling)"}
+  allow_short_z: {value: 6.0, status: calculated, source: "tensile_z / 3"}
+  allow_sustained_xy: {value: 10.0, status: assumed, source: "creep limit for loads held for hours; no PETG creep data found"}
+  allow_sustained_z: {value: 4.0, status: assumed, source: "creep limit across layers"}
+  allow_compression: {value: 20.0, status: assumed, source: "bearing under washers and contact"}
+  infill: {value: 0.25, status: assumed, source: "gyroid, for filament estimates"}
+  perimeter_shell: {value: 1.8, status: assumed, source: "4 perimeters x 0.45 mm, for filament estimates"}
 
+softwood:
+  density: {value: 450.0, status: assumed, source: "SPF strapping"}
+  modulus: {value: 9500.0, status: assumed, source: "SPF No.2 parallel to grain"}
+  allow_bending: {value: 10.0, status: assumed, source: "conservative short-term design value"}
+  allow_compression: {value: 8.0, status: assumed, source: "parallel to grain"}
+  allow_bearing_parallel: {value: 8.0, status: assumed, source: "bolt bearing along the grain"}
+  allow_bearing_perp: {value: 2.5, status: assumed, source: "compression across the grain"}
+
+plywood:
+  density: {value: 600.0, status: assumed, source: "generic, ribs"}
+  allow_bearing: {value: 15.0, status: assumed, source: "bolt bearing in thin plywood"}
+
+steel:
+  density: {value: 7850.0, status: confirmed, source: "handbook"}
+  bolt_yield: {value: 640.0, status: confirmed, source: "ISO 898-1 class 8.8"}
+
+# ------------------------------------------------------------------ tolerances (print the fit coupon first)
+tolerances:
+  rib_slot_total: {value: 0.4, status: assumed, source: "slot = rib + 0.4; FIT-01 has +0.2..+0.6"}
+  rib_flange_gap: {value: 0.2, status: assumed, source: "per side between rib and printed flange; bolts close it"}
+  bolt_hole_printed: {value: 0.4, status: assumed, source: "PETG clearance hole = d + 0.4"}
+  nut_pocket_af: {value: 0.4, status: assumed, source: "hex pocket across flats = nut + 0.4 (PETG)"}
+  nut_pocket_depth_extra: {value: 0.3, status: assumed, source: "pocket deeper than the nut"}
+  batten_socket: {value: 0.8, status: assumed, source: "socket = batten + 0.8 each way; FIT-01 has +0.6..+1.0"}
+  batten_end_gap: {value: 2.0, status: assumed, source: "batten end to socket floor, absorbs cut-length error"}
+  bearing_bore_fixed: {value: 22.10, status: assumed, source: "light press for 22 mm 608 outer race; FIT-01 has 22.0..22.2"}
+  bearing_bore_float: {value: 22.25, status: assumed, source: "slip fit on the -Y side so the axle can float axially"}
+  can_clearance: {value: 0.6, status: assumed, source: "collar bore = can + 0.6, pinch bolts close it"}
+
+# ------------------------------------------------------------------ bought-in parts
+battens:
+  section: {value: [19.0, 38.0], status: requires_measurement, source: "1x2 SPF strapping, actual 3/4 x 1-1/2 in"}
+  beam_section: {value: [19.0, 64.0], status: requires_measurement, source: "1x3 SPF, actual 3/4 x 2-1/2 in; base spokes and ground legs, which work in bending"}
+  feed_leg_section: {value: [19.0, 19.0], status: requires_measurement, source: "3/4 in square strip"}
+lazy_susan:
+  size: {value: 152.4, status: confirmed, source: "6 in square steel lazy susan, 152.4 mm, 500 lb class"}
+  thickness: {value: 7.93, status: confirmed, source: "5/16 in, retailer listings"}
+  ring_mean_radius: {value: 68.0, status: assumed, source: "between 119 mm ID and 152 mm OD"}
+  plate_thickness: {value: 1.5, status: requires_measurement, source: "stamped plate; sets the recess depth in AZT-01 and AZB-01"}
+  recess_clearance: {value: 0.4, status: assumed, source: "square recess = plate + 0.4; the kingpin clamps the stack, so no screws are needed"}
+bearing_608: {value: [8.0, 22.0, 7.0], status: confirmed, source: "ISO 608: d x D x B; C0 = 1370 N"}
+feed_can:
+  diameter: {value: 150.0, status: assumed, source: "about 0.71 wavelengths; must match the real can"}
+  length: {value: 280.0, status: assumed, source: "about 0.75 guide wavelengths"}
+  wall: {value: 0.5, status: assumed, source: "sheet metal"}
+  mass: {value: 0.40, status: assumed, source: "tinplate or aluminium can with back plate and probe"}
+  aperture_above_focus: {value: 0.0, status: requires_measurement, source: "phase centre assumed at the aperture"}
+  axial_travel: {value: 25.0, status: assumed, source: "each way, by sliding the can in the collar"}
+mesh:
+  areal_mass: {value: 0.67, status: assumed, source: "screening value for 6 mm opening steel mesh"}
+electronics:
+  ebox_outer: {value: [150.0, 110.0, 60.0], status: assumed, source: "Pi 5 + SDR + SSD envelope; contents not selected"}
+  ebox_mass: {value: 0.9, status: assumed, source: "Pi 5, SDR, SSD, box"}
+  lna_box_outer: {value: [90.0, 50.0, 35.0], status: assumed, source: "LNA + filter envelope; LNA not selected"}
+  lna_mass: {value: 0.12, status: assumed, source: "LNA, filter, box"}
+
+# ------------------------------------------------------------------ dish structure (printed)
+dish:
+  rim_panel_radial: {value: 9.0, status: assumed, source: "girder panel thickness"}
+  rim_chord_height: {value: 8.0, status: assumed, source: "top and bottom chord depth"}
+  rim_diagonal_width: {value: 6.0, status: assumed, source: "X bracing"}
+  flange_thickness: {value: 6.0, status: assumed, source: "rib clamp flanges, holds an M4 nut pocket"}
+  flange_r_range: {value: [462.0, 500.0], status: assumed, source: "rim flanges along the rib"}
+  hub_floor: {value: 3.0, status: assumed, source: "hub floor below the rib datum z=0"}
+  hub_disc_radius: {value: 70.0, status: assumed, source: "central floor"}
+  hub_ring: {value: [122.0, 140.0], status: assumed, source: "outer floor ring, fits the 290 mm bed"}
+  hub_wall: {value: 2.4, status: assumed, source: "rib channel walls"}
+  keeper_ring: {value: [122.0, 140.0], status: assumed, source: "clamps rib tips and the mesh centre"}
+  keeper_bolt_radius: {value: 131.0, status: assumed, source: "6 bolts between ribs"}
+  spacer_flange_r: {value: [288.0, 312.0], status: assumed, source: "mid-span spacer flanges"}
+  spacer_section: {value: [10.0, 12.0], status: assumed, source: "radial x height"}
+  anchor_rib_angles: {value: [60.0, 180.0, 300.0], status: assumed, source: "feed legs land on rib ends, symmetric about the elevation plane, none on the side that swings down"}
+  trunnion_block: {value: [20.0, 60.0], status: assumed, source: "radial thickness x width"}
+  sector_thickness: {value: 6.0, status: assumed, source: "elevation lock sector"}
+  lock_radius: {value: 70.0, status: assumed, source: "lock knob radius from the elevation axis"}
+  elevation_range: {value: [-5.0, 90.0], status: assumed, source: "slot ends are the hard stops"}
+
+feed_support:
+  collar_height: {value: 40.0, status: assumed, source: "single split collar"}
+  collar_wall: {value: 4.0, status: assumed, source: ""}
+  collar_bottom_above_focus: {value: 40.0, status: assumed, source: ""}
+  leg_anchor_point: {value: [508.0, 178.0], status: assumed, source: "r, z of the leg socket start, outside and above the rim"}
+
+# ------------------------------------------------------------------ mount (battens + printed nodes)
 mount:
-  pivot_height_above_rocker: {value: 560.0, status: assumed, source: "clears the 525 mm dish swing radius"}
-  upright_section: {value: [90.0, 45.0], status: assumed, source: "softwood 2x4 nominal"}
-  rocker_board: {value: [400.0, 1200.0, 18.0], status: assumed, source: "plywood"}
-  ground_disc_radius: {value: 250.0, status: assumed, source: "plywood"}
-  leg_length: {value: 700.0, status: assumed, source: "3 softwood legs; feet at 760 mm radius"}
-  electronics_box: {value: [120.0, 180.0, 65.0], status: assumed, source: "envelope only; contents not selected"}
-  electronics_mass_kg: {value: 1.0, status: assumed, source: "Pi 5, SDR, SSD, box"}
+  socket_wall: {value: 3.2, status: assumed, source: "8 perimeters at 0.4 mm; contact pressure under 2.5 MPa"}
+  socket_depth: {value: 75.0, status: assumed, source: "batten insertion"}
+  feed_socket_depth: {value: 45.0, status: assumed, source: "feed-leg insertion"}
+  socket_floor: {value: 4.0, status: assumed, source: ""}
+  socket_bolts_from_mouth: {value: [20.0, 45.0], status: assumed, source: "two M6 per socket"}
+  arm_half_spread: {value: 260.0, status: assumed, source: "A-frame feet at x = +/-260"}
+  brace_offset: {value: 200.0, status: assumed, source: "outboard brace foot, y = y_fork + 200"}
+  pivot_clearance: {value: 25.0, status: assumed, source: "dish to base top at the lowest pose"}
+  ground_leg_angles: {value: [0.0, 120.0, 240.0], status: assumed, source: "three feet do not rock"}
+  foot_radius: {value: 650.0, status: assumed, source: ""}
+  foot_node_bottom: {value: 15.0, status: assumed, source: "levelling bolt exposed length at nominal"}
+  plate_disc_diameter: {value: 220.0, status: assumed, source: "covers the lazy susan corners (215 mm)"}
+  plate_disc_thickness: {value: 8.0, status: assumed, source: ""}
 
-densities_kg_m3:
-  plywood: {value: 600.0, status: assumed, source: "generic; not measured"}
-  softwood: {value: 480.0, status: assumed, source: "generic; not measured"}
-  printed: {value: 1000.0, status: assumed, source: "PETG at partial infill; not measured"}
-  steel: {value: 7850.0, status: confirmed, source: "handbook"}
+loads:
+  wind_operating: {value: 8.0, status: assumed, source: "m/s; stow and ballast above this"}
+  wind_survival: {value: 12.0, status: assumed, source: "m/s, dish at zenith, ballasted"}
+  drag_coefficient: {value: 1.2, status: assumed, source: "solid disc, conservative for mesh"}
+  handling_push: {value: 50.0, status: assumed, source: "person leaning on the rim"}
+  ballast_ratio_target: {value: 1.5, status: assumed, source: "resisting / overturning moment"}
+
+# Pose used for the main STEP export. Run cad/build.py --az A --el E for another pose.
+pose:
+  azimuth: {value: 0.0, status: assumed, source: "deg"}
+  elevation: {value: 45.0, status: assumed, source: "deg"}

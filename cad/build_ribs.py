@@ -25,8 +25,8 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 PARAMS = os.path.join(ROOT, "cad", "parameters.yaml")
-OUT_EXPORTS = os.path.join(ROOT, "exports")
-OUT_DRAW = os.path.join(ROOT, "drawings")
+OUT_EXPORTS = os.path.join(ROOT, "exports", "rib_audit")
+OUT_DRAW = os.path.join(ROOT, "drawings", "rib_audit")
 OUT_ANALYSIS = os.path.join(ROOT, "analysis")
 N_SAMPLES = 81
 
@@ -45,10 +45,11 @@ def load_params():
         "w": float(v("rib", "thickness_board")),
         "t_outline": float(v("rib", "outline_line_width")),
         "stl_ref": os.path.join(ROOT, v("rib", "reference_stl")),
-        "tip_relief": float(v("centre_joint", "tip_relief_radius_candidate")),
-        "hub_r": float(v("centre_joint", "hub_disc_radius")),
-        "plate_t": float(v("frame", "rear_plate_thickness")),
-        "ring_w": float(v("frame", "rim_ring_radial_width")),
+        "tip_relief": float(v("rib", "tip_relief_radius")),
+        # Rev A reference skeleton only (rear disc and rim ring); Rev C replaced both with printed parts.
+        "hub_r": 200.0,
+        "plate_t": 12.0,
+        "ring_w": 60.0,
     }
 
 
@@ -190,19 +191,19 @@ def main():
     # 5. Outputs
     for d_ in (OUT_EXPORTS, OUT_DRAW, OUT_ANALYSIS):
         os.makedirs(d_, exist_ok=True)
-    asm = cq.Assembly(name="reflector_skeleton_PROVISIONAL")
+    asm = cq.Assembly(name="reflector_skeleton_revA_reference")
     for k, r_ in enumerate(ribs):
         asm.add(r_, name=f"RIB-{k + 1:02d}", color=cq.Color(0.82, 0.68, 0.45))
     asm.add(hub, name="HUB-01_rear_disc", color=cq.Color(0.6, 0.45, 0.3))
     asm.add(ring, name="RING-01_rim_ring", color=cq.Color(0.6, 0.45, 0.3))
     asm.add(focus, name="REF_focus_marker", color=cq.Color(1.0, 0.1, 0.1))
-    asm.export(os.path.join(OUT_EXPORTS, "reflector_skeleton_PROVISIONAL.step"))
+    asm.export(os.path.join(OUT_EXPORTS, "reflector_skeleton_revA_reference.step"))
     cq.exporters.export(wedge, os.path.join(OUT_EXPORTS, "RIB_solid_wedge_as_cut.step"))
-    cq.exporters.export(relieved, os.path.join(OUT_EXPORTS, "RIB_solid_wedge_tip_relief_PROVISIONAL.step"))
+    cq.exporters.export(relieved, os.path.join(OUT_EXPORTS, "RIB_solid_wedge_tip_relief.step"))
     cq.exporters.export(outline, os.path.join(OUT_EXPORTS, "RIB_outline_reference_matches_STL.step"))
     cq.exporters.export(cq.Workplane().add(cq.Compound.makeCompound(
         [r_.val() for r_ in ribs] + [hub.val(), ring.val(), focus.val()])),
-        os.path.join(OUT_EXPORTS, "reflector_skeleton_PROVISIONAL.stl"))
+        os.path.join(OUT_EXPORTS, "reflector_skeleton_revA_reference.stl"))
     cq.exporters.export(cq.Workplane("XZ").polyline(wedge_points(p)).close(),
                         os.path.join(OUT_DRAW, "RIB_profile_as_cut_1to1.dxf"))
     with open(os.path.join(OUT_ANALYSIS, "rib_build_report.txt"), "w") as fh:
