@@ -32,7 +32,7 @@ confirmed against the physical wood yet.
 | Rib bottom edge | flat, on z = 0 | confirmed (CAD) | STL bottom chord |
 | Vertex end vs rim end | pointed end = centre | confirmed (CAD) | STL: zero height at r = 0, 156 mm at r = 500 |
 | Rib body is solid wood under the curve | yes | **assumed** | STL interior is empty; the brief's description implies a solid wedge |
-| Board thickness | 5 mm | **requires measurement** | STL extrusion depth only |
+| Board thickness | 3.175 mm (1/8 in) | confirmed by the owner, nominal | owner, 2026-11-10. The STL is 5 mm deep; the CAD now uses 3.175. Check the real board with calipers (1/8 in plywood is often 2.8–3.2 mm) |
 | Wood species / plywood grade | unknown | **requires measurement** | |
 | As-cut profile accuracy | unknown | **requires measurement** | |
 | Tip condition (r < 60 mm, under 2.3 mm tall) | unknown | **requires measurement** | likely fragile or already broken |
@@ -58,7 +58,7 @@ confirmed against the physical wood yet.
 
 | Measure | Where it goes in `cad/parameters.yaml` | Why it matters |
 |---|---|---|
-| Rib thickness | `rib.thickness_board` | Every rib slot and flange gap |
+| Rib thickness (caliper check of the 1/8 in board) | `rib.thickness_board` | Every rib slot and flange gap |
 | Batten thickness and width (each size) | `battens.section`, `beam_section`, `feed_leg_section` | Socket bores; sockets are only 0.8 mm larger |
 | Lazy-susan overall thickness and plate size | `lazy_susan.thickness`, `size`, `plate_thickness` | Recess depth and the kingpin length |
 | Feed can diameter and length | `feed_can.diameter`, `length` | Collar bore |

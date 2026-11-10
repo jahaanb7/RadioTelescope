@@ -2,7 +2,7 @@
 
 Revision A, 2026-11-09. Modelled and analytically checked only. Nothing physically tested.
 Numbers come from `cad/build_ribs.py`; raw output is in `rib_build_report.txt`.
-All values assume a 5 mm board, which is unmeasured.
+All values assume a 5 mm board (Rev A). Rev C: the ribs are 1/8 in (3.175 mm), so the ribs meet even closer to the centre and the 60 mm tip relief has more margin; the hub in `cad/build.py` uses the real thickness.
 
 ## Finding
 

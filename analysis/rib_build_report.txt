@@ -1,17 +1,17 @@
-n=18 R=500.0 d=156.0 board=5.0 f=400.641 mm
-[outline] valid=True volume=5546.90 mm^3 (hole starts at r=56.65 mm)
+n=18 R=500.0 d=156.0 board=3.175 f=400.641 mm
+[outline] valid=True volume=3522.28 mm^3 (hole starts at r=56.65 mm)
 [stl]     triangles=432 volume=5555.21 mm^3 bbox min=[-500.0, 0.0, 0.0] max=[0.0, 5.0, 156.0]
-[check]   outline/STL volume ratio = 0.99850
+[check]   outline/STL volume ratio = 0.63405
 [check]   49 STL top-edge vertices, max |z - parabola| = 0.00004 mm
-[wedge]   valid=True volume=130010.2 mm^3
-[wedge]   height at r= 15 mm =   0.14 mm; gap between adjacent rib faces =   0.21 mm
-[wedge]   height at r= 30 mm =   0.56 mm; gap between adjacent rib faces =   5.42 mm
-[wedge]   height at r= 50 mm =   1.56 mm; gap between adjacent rib faces =  12.36 mm
-[wedge]   height at r= 60 mm =   2.25 mm; gap between adjacent rib faces =  15.84 mm
-[wedge]   height at r= 80 mm =   3.99 mm; gap between adjacent rib faces =  22.78 mm
-[wedge]   height at r=100 mm =   6.24 mm; gap between adjacent rib faces =  29.73 mm
-[wedge]   height at r=150 mm =  14.04 mm; gap between adjacent rib faces =  47.09 mm
-[clash]   untrimmed: 72 overlapping pairs of 153; overlap reaches r=14.62 mm, z=0.122 mm, total 17.241 mm^3
-[clash]   tip relief at r=60.0 mm: 0 overlapping pairs; removes 227.9 mm^3 per rib (0.175 % of rib), cut height 2.25 mm
+[wedge]   valid=True volume=82556.4 mm^3
+[wedge]   height at r= 15 mm =   0.14 mm; gap between adjacent rib faces =   2.03 mm
+[wedge]   height at r= 30 mm =   0.56 mm; gap between adjacent rib faces =   7.24 mm
+[wedge]   height at r= 50 mm =   1.56 mm; gap between adjacent rib faces =  14.19 mm
+[wedge]   height at r= 60 mm =   2.25 mm; gap between adjacent rib faces =  17.66 mm
+[wedge]   height at r= 80 mm =   3.99 mm; gap between adjacent rib faces =  24.61 mm
+[wedge]   height at r=100 mm =   6.24 mm; gap between adjacent rib faces =  31.55 mm
+[wedge]   height at r=150 mm =  14.04 mm; gap between adjacent rib faces =  48.92 mm
+[clash]   untrimmed: 72 overlapping pairs of 153; overlap reaches r=9.28 mm, z=0.053 mm, total 3.624 mm^3
+[clash]   tip relief at r=60.0 mm: 0 overlapping pairs; removes 144.7 mm^3 per rib (0.175 % of rib), cut height 2.25 mm
 [frame]   hub disc r=200.0 and rim ring width=60.0, t=12.0: 0 rib/plate volume interferences (ribs rest on z=0 face)
 [focus]   focal point at z=400.641 mm above vertex, 244.641 mm above rim plane

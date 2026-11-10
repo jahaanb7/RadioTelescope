@@ -494,8 +494,9 @@ def hub():
 
 def keeper():
     g, t = 0.5, 3.5
-    body = revolve([(KEEP0, zpar(KEEP0) + g), (KEEP1, zpar(KEEP1) + g), (KEEP1, zpar(KEEP1) + g + t),
-                    (KEEP0, zpar(KEEP0) + g + t)])
+    # underside follows the mesh; top is flat so the ring prints top-down with no supports
+    top_flat = zpar(KEEP1) + g + t
+    body = revolve([(KEEP0, zpar(KEEP0) + g), (KEEP1, zpar(KEEP1) + g), (KEEP1, top_flat), (KEEP0, top_flat)])
     top = zpar(KEEP_BOLT_R) + g + t
     cutters = []
     for k in range(6):
@@ -1297,7 +1298,7 @@ def structural_report(info, zp_local, dish_mass, dish_cg, results, log):
     log("### Dish joints and feed support")
     shear = Wd / (N * len(RIM_HOLE_Z))
     log(f"- Rim joint: whole dish weight shared by {N * len(RIM_HOLE_Z)} M4 bolts gives {shear:.1f} N per bolt; bearing in "
-        f"the {W:.0f} mm rib {shear / (4 * W):.2f} MPa (plywood allowable {P('plywood', 'allow_bearing'):.0f}). "
+        f"the {W:.2f} mm rib {shear / (4 * W):.2f} MPa (plywood allowable {P('plywood', 'allow_bearing'):.0f}). "
         f"The joint is clamped, so friction carries it before the bolt bears.")
     feed_m = sum(mass_kg(p) for p in PARTS if p["id"] in ("FEED-01", "FRG-01", "LNA-01", "LNA-02"))
     pa, pc = feed_geometry()
@@ -1586,7 +1587,7 @@ def export_all(info, zp, Zp, args, log):
                 w.writerow([pid, "6 in square lazy-susan bearing (both plates)", p["kind"], p["material"], "ground + az",
                             1, f"{2 * m:.3f}", f"{2 * m:.3f}"])
                 continue
-            nm = p["name"] if qty[pid] == 1 else re.sub(r" \d+(\.\d+)? deg$|( existing rib) \d+$", r"\1", p["name"])
+            nm = p["name"] if qty[pid] == 1 else re.sub(r" \d+(\.\d+)? deg$|(?<=rib) \d+$", "", p["name"])
             w.writerow([pid, nm, p["kind"], p["material"], p["group"], qty[pid], f"{m:.3f}", f"{m * qty[pid]:.3f}"])
     hw = OrderedDict()
     for p in PARTS:
@@ -1648,16 +1649,55 @@ def export_all(info, zp, Zp, args, log):
     msp.add_text(f"RIB x18: cut tip at r={RELIEF:.0f}, drill 3 holes D{DRILL:.1f}. 1:1 mm. Print at 100% and check the "
                  f"{R:.0f} mm length.", height=5, dxfattribs={"layer": "TEXT"}).set_placement((0, -15))
     doc.saveas(d("drawings", "RIB_drilling_template_1to1.dxf"))
+    log("- `drawings/RIB_drilling_template_1to1.dxf`: rib cut and drill template, 1:1.")
 
-    # --- renders
-    def scene(el, az, groups=("ground", "az", "dish")):
-        return [(pose_solid(p["solid"], p["group"], zp, Zp, el, az), kind_color(p)) for p in PARTS if p["group"] in groups]
-    for el, az, view, nm in ((45, 30, "iso", "iso_el45"), (90, 0, "iso", "iso_zenith"), (0, 0, "side", "side_el0"),
-                             (45, 0, "front", "front_el45"), (90, 0, "top", "top_zenith")):
-        render(scene(el, az), d("drawings", f"view_{nm}.png"), view=view, title=f"Rev C  az {az}  el {el}")
-    render([(p["solid"], kind_color(p)) for p in PARTS if p["group"] != "dish"], d("drawings", "view_mount_only.png"),
-           view="iso", title="mount (fixed stand + turning base)")
-    log("- `drawings/`: RIB_drilling_template_1to1.dxf and six PNG views.")
+    # --- renders (images/ for the README and the assembly guide)
+    img = d("images")
+    os.makedirs(os.path.join(img, "parts"), exist_ok=True)
+    for f in os.listdir(d("drawings")):
+        if f.startswith("view_") and f.endswith(".png"):
+            os.remove(d("drawings", f))
+
+    def scene(el, az, groups=("ground", "az", "dish"), ids=None):
+        return [(pose_solid(p["solid"], p["group"], zp, Zp, el, az), kind_color(p)) for p in PARTS
+                if p["group"] in groups and (ids is None or p["id"] in ids)]
+    for el, az, view, nm in ((45, 30, "iso", "assembly_iso_el45"), (90, 0, "iso", "assembly_iso_zenith"),
+                             (0, 0, "side", "assembly_side_el0"), (45, 0, "front", "assembly_front_el45"),
+                             (90, 0, "top", "assembly_top_zenith"), (20, 135, (210, 20), "assembly_rear_el20"),
+                             (-5, 0, "side", "motion_el_minus5"), (30, 0, "side", "motion_el30"),
+                             (60, 0, "side", "motion_el60"), (90, 0, "side", "motion_el90")):
+        render(scene(el, az), os.path.join(img, f"{nm}.png"), view=view, title=f"Rev C   az {az} deg   el {el} deg")
+    render(scene(90, 0, ("ground",)), os.path.join(img, "stage1_fixed_stand.png"), view="iso",
+           title="Stage 1: fixed stand (ground legs, feet, AZB-01, lazy susan, kingpin)")
+    render(scene(90, 0, ("ground", "az")), os.path.join(img, "stage2_turning_base.png"), view="iso",
+           title="Stage 2: turning base on the stand (fork, corner nodes, AZT-01, lock)")
+    render(scene(90, 0, ("dish",), ids={"RIB", "HUB-01", "HUB-02"}), os.path.join(img, "stage3a_ribs_hub.png"),
+           view="iso", title="Stage 3a: ribs in the hub, keeper ring")
+    frame_ids = {p["id"] for p in PARTS if p["group"] == "dish"} - {"MESH-01", "FEED-01", "FRG-01", "LNA-01", "LNA-02",
+                                                                     "LEG-F", "FLA-01"}
+    render(scene(90, 0, ("dish",), ids=frame_ids),
+           os.path.join(img, "stage3b_dish_frame.png"), view="iso", title="Stage 3b: rim girder, spacers, trunnions")
+    render(scene(90, 0, ("dish",)), os.path.join(img, "stage3c_dish_complete.png"), view="iso",
+           title="Stage 3c: feed support, collar, feed, mesh")
+    firsts = OrderedDict()
+    for p in PARTS:
+        if p["kind"] in ("print", "wood", "existing"):
+            firsts.setdefault(p["id"], p)
+    for pid, p in firsts.items():
+        render([(p["solid"], kind_color(p))], os.path.join(img, "parts", f"{pid}.png"), view="iso", size=(900, 700),
+               title=f"{pid}  {p['name']}")
+    for a_ in shop_aids():
+        render([(a_["solid"], "print")], os.path.join(img, "parts", f"{a_['id']}.png"), view="iso", size=(900, 700),
+               title=f"{a_['id']}  {a_['name']}")
+    log(f"- `images/`: assembly, motion-range and build-stage renders; `images/parts/`: one image per part type.")
+
+    # --- bed orientation, supports, time (cad/print_prep.py rewrites print/*.stl and print/print_specs.csv)
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("print_prep", os.path.join(ROOT, "cad", "print_prep.py"))
+    pp = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(pp)
+    pp.main()
+    log("- `print/print_specs.csv`: bed orientation, supports, settings and estimated time per part (cad/print_prep.py).")
 
     # --- Fusion 360 joint script
     write_fusion_script(Zp)

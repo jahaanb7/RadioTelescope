@@ -13,7 +13,7 @@ rib:
   profile_shape: {value: parabola, status: confirmed, source: "49 STL top-edge vertices match z=r^2/(4f) within 0.0001 mm"}
   focal_length_f: {value: 400.641, status: calculated, source: "R^2/(4d)"}
   outline_line_width: {value: 1.0, status: confirmed, source: "STL is a hollow 1 mm outline (top strip, bottom chord, rim post)"}
-  thickness_board: {value: 5.0, status: requires_measurement, source: "STL extrusion depth is 5 mm; physical board thickness not measured. Drives every rib slot and flange gap"}
+  thickness_board: {value: 3.175, status: confirmed, source: "owner, 2026-11-10: ribs cut from 1/8 in board (nominal). Check with calipers; FIT-01 slots cover +0.2..+0.6. Drives every rib slot and flange gap"}
   body_style: {value: solid_wedge, status: assumed, source: "brief describes pointed centre end and tall rim end; STL interior is empty"}
   material: {value: plywood, status: requires_measurement, source: "assumed plywood for bolt-bearing checks"}
   tip_relief_radius: {value: 60.0, status: assumed, source: "owner approved drilling 2026-11-10; tip cut still to confirm. Hub works with any relief >= 30 mm"}
