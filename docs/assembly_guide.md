@@ -30,14 +30,9 @@ spirit level, soldering iron (for nuts), zip ties.
 ![Rib template](../images/parts/RIB.png)
 
 1. Cut the **60 mm tip relief** at the pointed end: a square cut 60 mm from the tip (template:
-   `drawings/RIB_drilling_template_1to1.dxf`, print at 100 % and check the 500 mm length).
-2. Slide **`JIG-01`** over the rim end of the rib: the end cap against the rib end, the lip under the flat back edge.
-   Drill the two 4.5 mm rim holes through the guide.
-3. Slide **`JIG-02`** on from the rim end the same way and drill the 4.5 mm mid-span hole (r = 300 mm).
-4. Check one drilled rib against the DXF before drilling the rest.
-
-The ribs are only 1/8 in (3.2 mm), so keep the drill square and use light pressure to avoid splintering the back face
-(a scrap block behind the rib helps).
+   `drawings/RIB_cut_template_1to1.dxf`, print at 100 % and check the 500 mm length).
+2. Do not drill the ribs. The rim bays and spacers are glued on, so lightly sand the rib faces over the last
+   20 mm at the rim end and around r = 300 mm, and wipe off the dust.
 
 ## 2. Stage 1: fixed stand
 
@@ -86,13 +81,16 @@ Work on a large flat table with the dish face up (vertex down).
 
 ![Dish frame](../images/stage3b_dish_frame.png)
 
-1. Fit the 18 rim bays between the rib ends: sixteen **`RIM-01`** and two **`RIM-T`** trunnion bays. The two
-   `RIM-T` must be opposite each other, centred between ribs, on the axle line (Y). Each rib end sits between
-   the flanges of two neighbouring bays.
-2. At every rib, push two **M4 × 20** through the flange, the rib and the next flange, head on the plain flange,
-   nut in the pocketed flange (36 bolts). Tighten in a criss-cross pattern while checking that the rib tops sit
-   flush with the bay tops.
-3. Fit the 18 **`SPC-01`** spacers between the ribs at mid span; one **M4 × 20** through each rib's mid hole.
+1. Dry-fit the 18 rim bays between the rib ends: ten **`RIM-01`** (no holes), six **`RIM-02`** (with drilled
+   pads) and two **`RIM-T`** trunnion bays. The two `RIM-T` must be opposite each other, centred between ribs,
+   on the axle line (Y). The six `RIM-02` go on both sides of ribs 60°, 180° and 300°, pads toward that rib.
+   Press an M4 nut into each of the two pad pockets on every `RIM-02`. Each rib end sits between the flanges of
+   two neighbouring bays.
+2. Glue the bays on: spread epoxy on both flange faces of each bay, slide it down between the ribs and clamp
+   each rib end with a spring clamp or clothes peg until it sets. There are no bolts. Check that the rib tops
+   sit flush with the bay tops before the glue cures. This glue joint is untested: glue one bay to a scrap of
+   the rib plywood first and try to break it.
+3. Glue the 18 **`SPC-01`** spacers between the ribs at mid span (r = 300 mm) the same way.
 4. Bolt the lock sector **`ELS-01`** to the +Y trunnion with two **M4 × 35** (nuts in the sector pockets) and put
    spacer **`SPR-03`** on the −Y trunnion.
 5. Drop an **M8 × 90** bolt into the hex pocket inside each trunnion, thread pointing outward.
@@ -102,7 +100,8 @@ Work on a large flat table with the dish face up (vertex down).
 ![Complete dish](../images/stage3c_dish_complete.png)
 
 1. Bolt the three feed-leg anchors **`FLA-01`** to the rim at ribs 60°, 180° and 300° (four M4 × 20 each,
-   into the neighbouring rim bays).
+   into the nuts in the pads of the neighbouring `RIM-02` bays). These, with the leg and collar bolts,
+   are the only screws in the rib supports.
 2. Push the three **`LEG-F`** feed legs (19 × 19) into the anchors and into **`FRG-01`** (feed collar), one
    **M4 × 35** at each end.
 3. Slide the **feed can** into the collar, open end toward the dish. Its open end goes at the focus,

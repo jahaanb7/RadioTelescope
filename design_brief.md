@@ -35,7 +35,7 @@ FRG-01 collar, feed can, LNA  ELS-01 lock sector + KNB-01 knob
 | Elevation lock | Slotted sector with carriage bolt and knob; slot ends are the hard stops at −5° and 90° | One part does lock and limits | Separate stop blocks |
 | Azimuth | 6 in lazy-susan bearing between two printed plates, M10 kingpin with nyloc and friction knob | Bought bearing carries the load; the knob sets the drag | Rev B PTFE glides |
 | Stand | Three legs, three feet with levelling bolts and ballast eyes | Three points never rock | Four legs: needs shimming |
-| Shop aids | FIT-01 coupon, JIG-01 and JIG-02 drill jigs | Tolerances are checked before printing 6 kg; holes land in the same place on all 18 ribs | Marking by hand |
+| Shop aids | FIT-01 coupon | Tolerances are checked before printing 6 kg. The ribs are not drilled (Rev C.1), so the drill jigs are gone | Marking by hand |
 
 ## Receiver chain (not yet specified)
 

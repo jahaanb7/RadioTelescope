@@ -1,5 +1,16 @@
 # Changelog
 
+## Rev C.1, 2026-11-10
+
+- Rib supports now come in two types. Normal: `RIM-01` rim bay (10) and `SPC-01` spacer (18) have no screw holes or
+  nut pockets and are glued to the ribs. Feed: `FLA-01` anchor (3) and the new `RIM-02` rim bay (6, beside ribs 60,
+  180 and 300 deg) keep the M4 holes and nut pockets that hold the feed tripod.
+- The ribs are no longer drilled. Removed: 54 rib bolts, the mesh-screw holes in the rim chords and spacers, drill jigs
+  `JIG-01`/`JIG-02`, and the drilling template (now `drawings/RIB_cut_template_1to1.dxf`).
+- 2 mm fillets on every rib support (`rib_support.fillet_radius`), applied edge by edge; bed faces stay sharp.
+- Fasteners 494 to 332. PETG 7.2 to 6.6 kg, print time 235 to 210 h. Dish 6.2 to 5.5 kg; axle height 724 mm.
+- Not tested: the epoxy joint between plywood and PETG. `RIM-T` and the hub keeper keep their bolts.
+
 ## Rev C, 2026-11-10
 
 - Redesign for minimum wood: only the 18 existing ribs and straight softwood battens; everything else printed in PETG

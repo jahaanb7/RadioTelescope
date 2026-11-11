@@ -1,5 +1,5 @@
 part,name,section_mm,length_mm,qty,bolt_holes_from_each_end_mm,hole_dia_mm,drill_through
-LEG-A,fork leg x+ y+,19 x 38,570,4,28 / 53,6.5,"through the 19 mm face, centred on the 38 mm width"
+LEG-A,fork leg x+ y+,19 x 38,573,4,28 / 53,6.5,"through the 19 mm face, centred on the 38 mm width"
 SIL-01,base sill y+,19 x 38,418,2,28 / 53,6.5,"through the 19 mm face, centred on the 38 mm width"
 SPK-01,base spoke x+ y+,19 x 64,507,4,28 / 53,6.5,"through the 19 mm face, centred on the 64 mm width"
 LEG-G,ground leg,19 x 64,586,3,28 / 53,6.5,"through the 19 mm face, centred on the 64 mm width"

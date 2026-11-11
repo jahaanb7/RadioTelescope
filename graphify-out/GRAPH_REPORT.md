@@ -1,18 +1,18 @@
 # Graph Report - RadioTelescope  (2026-11-10)
 
 ## Corpus Check
-- 5 files · ~31,416 words
+- 5 files · ~31,617 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 84 file(s) not represented in the graph (top: .step 42, .stl 29, .csv 6)
-- WARNING: 84 of 149 files seen (56%) have no supported extractor and are missing from this graph entirely. It may look complete while representing only part of the codebase.
+- Unclassified: 82 file(s) not represented in the graph (top: .step 41, .stl 28, .csv 6)
+- WARNING: 82 of 146 files seen (56%) have no supported extractor and are missing from this graph entirely. It may look complete while representing only part of the codebase.
 
 ## Summary
-- 616 nodes · 898 edges · 63 communities (61 shown, 2 thin omitted)
+- 612 nodes · 889 edges · 48 communities (46 shown, 2 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 2 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `62694fd0`
+- Built from commit: `7aac66ac`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -37,8 +37,7 @@
 - telescope_joints.py
 - dish
 - brace_offset
-- count
-- depth_d
+- rib_support
 - elevation_range
 - flange_r_range
 - flange_thickness
@@ -55,15 +54,10 @@
 - spacer_flange_r
 - spacer_section
 - trunnion_block
-- drill_clearance
 - feed_socket_depth
-- focal_length_f
 - foot_node_bottom
 - foot_radius
 - ground_leg_angles
-- material
-- mid_hole_radius
-- mid_hole_z
 - pivot_clearance
 - plate_disc_diameter
 - plate_disc_thickness
@@ -71,44 +65,33 @@
 - socket_depth
 - socket_floor
 - socket_wall
-- outline_line_width
-- profile_shape
-- radius_R
-- reference_stl
-- rim_hole_radius
-- rim_hole_z
-- thickness_board
-- tip_relief_radius
-- print_prep.py
 
 ## God Nodes (most connected - your core abstractions)
-1. `build_dish()` - 26 edges
+1. `build_dish()` - 28 edges
 2. `build_mount()` - 21 edges
 3. `export_all()` - 21 edges
 4. `dish` - 19 edges
 5. `main()` - 18 edges
-6. `hole()` - 17 edges
-7. `rib` - 17 edges
-8. `hub()` - 15 edges
-9. `rim_panel()` - 14 edges
-10. `mount` - 14 edges
+6. `rim_panel()` - 16 edges
+7. `hub()` - 15 edges
+8. `hole()` - 14 edges
+9. `mount` - 14 edges
+10. `bolt()` - 13 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `run()` --calls--> `math`  [EXTRACTED]
   cad/fusion/telescope_joints/telescope_joints.py →   _Bridges community 17 → community 4_
 - `rotation_to_down()` --calls--> `numpy`  [EXTRACTED]
-  cad/print_prep.py →   _Bridges community 62 → community 4_
-- `build_outline_rib()` --calls--> `numpy`  [EXTRACTED]
-  cad/build_ribs.py →   _Bridges community 5 → community 4_
+  cad/print_prep.py →   _Bridges community 5 → community 4_
 
 ## Import Cycles
 - None detected.
 
-## Communities (63 total, 2 thin omitted)
+## Communities (48 total, 2 thin omitted)
 
 ### Community 0 - "rib"
-Cohesion: 0.40
-Nodes (5): source, status, value, rib, body_style
+Cohesion: 0.04
+Nodes (45): source, status, value, source, status, value, source, status (+37 more)
 
 ### Community 1 - "tolerances"
 Cohesion: 0.05
@@ -124,11 +107,11 @@ Nodes (5): source, status, value, mount, arm_half_spread
 
 ### Community 4 - "build_dish"
 Cohesion: 0.06
-Nodes (58): add(), analyse(), lumped(), bar(), bay_wedge(), bb_overlap(), bolt(), build_dish() (+50 more)
+Nodes (59): add(), analyse(), lumped(), bar(), bay_wedge(), bb_overlap(), bolt(), build_dish() (+51 more)
 
 ### Community 5 - "build_ribs.py"
-Cohesion: 0.16
-Nodes (9): array(), build_outline_rib(), extrude_profile(), load_params(), main(), pair_overlaps(), parabola(), stl_stats() (+1 more)
+Cohesion: 0.10
+Nodes (16): array(), build_outline_rib(), extrude_profile(), load_params(), main(), pair_overlaps(), parabola(), stl_stats() (+8 more)
 
 ### Community 6 - "petg"
 Cohesion: 0.05
@@ -178,13 +161,9 @@ Nodes (5): source, status, value, dish, anchor_rib_angles
 Cohesion: 0.50
 Nodes (4): source, status, value, brace_offset
 
-### Community 20 - "count"
-Cohesion: 0.50
-Nodes (4): source, status, value, count
-
-### Community 21 - "depth_d"
-Cohesion: 0.50
-Nodes (4): source, status, value, depth_d
+### Community 20 - "rib_support"
+Cohesion: 0.15
+Nodes (13): source, status, value, rib_support, fillet_radius, slot_lead_in, spacer_radius, source (+5 more)
 
 ### Community 22 - "elevation_range"
 Cohesion: 0.50
@@ -250,17 +229,9 @@ Nodes (4): spacer_section, source, status, value
 Cohesion: 0.50
 Nodes (4): trunnion_block, source, status, value
 
-### Community 38 - "drill_clearance"
-Cohesion: 0.50
-Nodes (4): source, status, value, drill_clearance
-
 ### Community 39 - "feed_socket_depth"
 Cohesion: 0.50
 Nodes (4): source, status, value, feed_socket_depth
-
-### Community 40 - "focal_length_f"
-Cohesion: 0.50
-Nodes (4): source, status, value, focal_length_f
 
 ### Community 41 - "foot_node_bottom"
 Cohesion: 0.50
@@ -273,18 +244,6 @@ Nodes (4): source, status, value, foot_radius
 ### Community 43 - "ground_leg_angles"
 Cohesion: 0.50
 Nodes (4): source, status, value, ground_leg_angles
-
-### Community 44 - "material"
-Cohesion: 0.50
-Nodes (4): source, status, value, material
-
-### Community 45 - "mid_hole_radius"
-Cohesion: 0.50
-Nodes (4): source, status, value, mid_hole_radius
-
-### Community 46 - "mid_hole_z"
-Cohesion: 0.50
-Nodes (4): source, status, value, mid_hole_z
 
 ### Community 47 - "pivot_clearance"
 Cohesion: 0.50
@@ -314,42 +273,6 @@ Nodes (4): socket_floor, source, status, value
 Cohesion: 0.50
 Nodes (4): socket_wall, source, status, value
 
-### Community 54 - "outline_line_width"
-Cohesion: 0.50
-Nodes (4): source, status, value, outline_line_width
-
-### Community 55 - "profile_shape"
-Cohesion: 0.50
-Nodes (4): source, status, value, profile_shape
-
-### Community 56 - "radius_R"
-Cohesion: 0.50
-Nodes (4): source, status, value, radius_R
-
-### Community 57 - "reference_stl"
-Cohesion: 0.50
-Nodes (4): source, status, value, reference_stl
-
-### Community 58 - "rim_hole_radius"
-Cohesion: 0.50
-Nodes (4): rim_hole_radius, source, status, value
-
-### Community 59 - "rim_hole_z"
-Cohesion: 0.50
-Nodes (4): rim_hole_z, source, status, value
-
-### Community 60 - "thickness_board"
-Cohesion: 0.50
-Nodes (4): thickness_board, source, status, value
-
-### Community 61 - "tip_relief_radius"
-Cohesion: 0.50
-Nodes (4): tip_relief_radius, source, status, value
-
-### Community 62 - "print_prep.py"
-Cohesion: 0.25
-Nodes (7): estimate(), fits(), flat_footprint(), main(), orient(), rotation_to_down(), score()
-
 ## Knowledge Gaps
 - **2 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -357,16 +280,16 @@ Nodes (7): estimate(), fits(), flat_footprint(), main(), orient(), rotation_to_d
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `dish` connect `dish` to `rim_diagonal_width`, `rim_panel_radial`, `sector_thickness`, `spacer_flange_r`, `spacer_section`, `trunnion_block`, `hub_disc_radius`, `parameters.yaml`, `elevation_range`, `flange_r_range`, `flange_thickness`, `hub_floor`, `hub_ring`, `hub_wall`, `keeper_bolt_radius`, `keeper_ring`, `lock_radius`, `rim_chord_height`?**
-  _High betweenness centrality (0.162) - this node is a cross-community bridge._
+  _High betweenness centrality (0.161) - this node is a cross-community bridge._
+- **Should `rib` be split into smaller, more focused modules?**
+  _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
+- **Why does `mount` connect `mount` to `feed_socket_depth`, `parameters.yaml`, `foot_radius`, `foot_node_bottom`, `ground_leg_angles`, `pivot_clearance`, `plate_disc_diameter`, `plate_disc_thickness`, `socket_bolts_from_mouth`, `brace_offset`, `socket_depth`, `socket_floor`, `socket_wall`?**
+  _High betweenness centrality (0.119) - this node is a cross-community bridge._
 - **Should `tolerances` be split into smaller, more focused modules?**
   _Cohesion score 0.04878048780487805 - nodes in this community are weakly interconnected._
-- **Why does `rib` connect `rib` to `drill_clearance`, `focal_length_f`, `parameters.yaml`, `material`, `mid_hole_radius`, `mid_hole_z`, `count`, `depth_d`, `outline_line_width`, `profile_shape`, `radius_R`, `reference_stl`, `rim_hole_radius`, `rim_hole_z`, `thickness_board`, `tip_relief_radius`?**
-  _High betweenness centrality (0.145) - this node is a cross-community bridge._
+- **Why does `rib` connect `rib` to `parameters.yaml`?**
+  _High betweenness centrality (0.102) - this node is a cross-community bridge._
 - **Should `feed_can` be split into smaller, more focused modules?**
   _Cohesion score 0.08 - nodes in this community are weakly interconnected._
-- **Why does `mount` connect `mount` to `feed_socket_depth`, `parameters.yaml`, `foot_radius`, `foot_node_bottom`, `ground_leg_angles`, `pivot_clearance`, `plate_disc_diameter`, `plate_disc_thickness`, `socket_bolts_from_mouth`, `brace_offset`, `socket_depth`, `socket_floor`, `socket_wall`?**
-  _High betweenness centrality (0.120) - this node is a cross-community bridge._
 - **Should `build_dish` be split into smaller, more focused modules?**
-  _Cohesion score 0.06053683609366076 - nodes in this community are weakly interconnected._
-- **Should `petg` be split into smaller, more focused modules?**
-  _Cohesion score 0.05405405405405406 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05678346810422282 - nodes in this community are weakly interconnected._

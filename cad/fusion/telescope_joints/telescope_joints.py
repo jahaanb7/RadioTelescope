@@ -7,7 +7,7 @@ cad/fusion/telescope_joints, then Run. Do it in a NEW empty design.
 It imports exports/stages/fixed_stand.step, turning_base.step and dish.step into three components,
 grounds the fixed stand and adds two as-built revolute joints:
   Azimuth    turning_base about the vertical axis through the kingpin (world Z at the origin), no limit.
-  Elevation  dish about the axle (parallel to Y, 721.3 mm above the ground), 0 to 95 deg of tilt
+  Elevation  dish about the axle (parallel to Y, 723.8 mm above the ground), 0 to 95 deg of tilt
              from zenith (elevation 90 to -5 deg).
 Drag the dish or use the joint's "Drive Joints" to move it. If the dish tilts the wrong way, swap the two limits.
 """
@@ -17,7 +17,7 @@ import adsk.core
 import adsk.fusion
 import traceback
 
-ZP_CM = 72.1337             # elevation axle height above the ground, cm (Fusion API units)
+ZP_CM = 72.3763             # elevation axle height above the ground, cm (Fusion API units)
 TILT_MAX_DEG = 95.0   # zenith to the lowest elevation
 STAGES = ["fixed_stand", "turning_base", "dish"]
 

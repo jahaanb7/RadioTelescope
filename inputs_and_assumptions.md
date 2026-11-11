@@ -36,7 +36,7 @@ confirmed against the physical wood yet.
 | Wood species / plywood grade | unknown | **requires measurement** | |
 | As-cut profile accuracy | unknown | **requires measurement** | |
 | Tip condition (r < 60 mm, under 2.3 mm tall) | unknown | **requires measurement** | likely fragile or already broken |
-| Tip relief radius | 60 mm | confirmed by the owner (Rev C) | ribs are also drilled: owner approved, 2026-11-10 |
+| Tip relief radius | 60 mm | confirmed by the owner (Rev C) | ribs are no longer drilled (Rev C.1): supports are glued |
 | Reflector RMS target | 5 mm | assumed | brief; Ruze surface factor 0.915 at 21 cm |
 | Printer | Prusa CORE One L, 300 × 300 × 330 mm | confirmed | owner; Prusa product page |
 | Filament | PETG | confirmed | owner. Interlayer strength 18 ± 4 MPa (Prusament data) |

@@ -1,11 +1,12 @@
 part,name,kind,material,group,qty,kg_each,kg_total
-RIB,existing rib,existing,plywood,dish,18,0.049,0.889
+RIB,existing rib,existing,plywood,dish,18,0.049,0.890
 HUB-01,hub with 18 rib channels,print,petg,dish,1,0.233,0.233
 HUB-02,keeper ring (clamps rib tips and mesh centre),print,petg,dish,1,0.088,0.088
-RIM-01,rim girder bay,print,petg,dish,16,0.106,1.703
-RIM-T,rim girder trunnion bay,print,petg,dish,2,0.245,0.490
-SPC-01,mid-span spacer bay,print,petg,dish,18,0.027,0.482
-FLA-01,feed-leg anchor,print,petg,dish,3,0.101,0.304
+RIM-01,rim girder bay,print,petg,dish,10,0.079,0.787
+RIM-02,feed rim bay 50 deg (anchor pads),print,petg,dish,6,0.082,0.494
+RIM-T,rim girder trunnion bay,print,petg,dish,2,0.222,0.445
+SPC-01,mid-span spacer bay,print,petg,dish,18,0.025,0.453
+FLA-01,feed-leg anchor,print,petg,dish,3,0.096,0.289
 LEG-F,feed leg,wood,softwood,dish,3,0.080,0.239
 FRG-01,"feed collar (split, three leg sockets, LNA shelf)",print,petg,dish,1,0.206,0.206
 FEED-01,"feed can (conductive, provisional size)",purchase,steel,dish,1,0.400,0.400
@@ -22,7 +23,7 @@ FKT-02,fork top node -Y (floating bearing fit),print,petg,az,1,0.124,0.124
 KNB-01,elevation lock knob (captures an M6 nut),print,petg,az,1,0.014,0.014
 FKC-01,base corner node x+ y+,print,petg,az,2,0.213,0.426
 FKC-02,base corner node x+ y-,print,petg,az,2,0.213,0.426
-LEG-A,fork leg x+ y+,wood,softwood,az,4,0.184,0.737
+LEG-A,fork leg x+ y+,wood,softwood,az,4,0.185,0.740
 SPK-01,base spoke x+ y+,wood,softwood,az,4,0.276,1.104
 SIL-01,base sill y+,wood,softwood,az,2,0.134,0.268
 LEG-G,ground leg,wood,softwood,ground,3,0.320,0.959

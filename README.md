@@ -14,14 +14,14 @@ printed parts (Prusa CORE One L), on an alt-azimuth fork mount. The specificatio
 | | |
 |---|---|
 | Motion | Azimuth unlimited (lazy-susan bearing, M10 kingpin); elevation −5° to 90° (608 bearings, M8 axle) |
-| Axle height | 722 mm; the dish centre of mass is 1.1 mm from the axle, so it stays where you leave it |
-| Mass | 14.5 kg total: dish 6.2, turning base 5.8, fixed stand 2.5 |
-| PETG | about 7.2 kg, about 235 h of printing (24 part types plus the coupon and two jigs); every part fits the 300 × 300 × 330 bed |
+| Axle height | 724 mm; the dish centre of mass is 1.0 mm from the axle, so it stays where you leave it |
+| Mass | 13.8 kg total: dish 5.5, turning base 5.8, fixed stand 2.5 |
+| PETG | about 6.6 kg, about 210 h of printing (25 part types plus the fit coupon); every part fits the 300 × 300 × 330 bed |
 | Wood | the 18 ribs plus 8.4 m of batten (19×38, 19×64, 19×19), 16 pieces |
-| Hardware | 494 bolts, nuts and washers (M4, M6, M8, M10), four 608 bearings, one 6 in lazy susan |
-| Checks | 601 solids, 0 invalid, 0 clashes (parts, every fastener, elevation sweep every 5°, azimuth sweep every 15°) |
+| Hardware | 332 bolts, nuts and washers (M4, M6, M8, M10), four 608 bearings, one 6 in lazy susan |
+| Checks | 439 solids, 0 invalid, 0 clashes (parts, every fastener, elevation sweep every 5°, azimuth sweep every 15°) |
 | Strength | worst batten 4.0 MPa against 10; worst joint 92 % (ground-leg socket under a 50 N side push) |
-| Wind | stable to about 8 m/s with no ballast; 1.5 kg per foot for 10 m/s, 4.4 kg for 12 m/s |
+| Wind | stable to about 8 m/s with no ballast; 2.0 kg per foot for 10 m/s, 4.8 kg for 12 m/s |
 
 ## Build documentation
 
@@ -56,10 +56,25 @@ All dimensions come from `cad/parameters.yaml`, and each value there is tagged w
 ## Build order
 
 1. Print `FIT-01`. Set `tolerances` in `cad/parameters.yaml` from what fits, then rebuild.
-2. Cut the 60 mm tip relief on each rib and drill three holes using `JIG-01` and `JIG-02`. The DXF template `drawings/RIB_drilling_template_1to1.dxf` is a cross-check (`bom/rib_modifications.csv`).
+2. Cut the 60 mm tip relief on each rib. The ribs are not drilled. The DXF template `drawings/RIB_cut_template_1to1.dxf` is a cross-check (`bom/rib_modifications.csv`).
 3. Print the parts in `print/print_list.csv`. Every STL is already laid flat for the bed.
 4. Cut and drill the battens from `bom/cut_list.csv`. Hole positions are measured from each end.
-5. Assemble the stand, then the turning base, then the dish (hub, ribs, rim bays, spacers, feed). Bolt it to the fork and balance it.
+5. Assemble the stand, then the turning base, then the dish (hub, ribs, glued rim bays and spacers, bolted feed supports). Bolt it to the fork and balance it.
+
+## Rib supports: two types
+
+The printed parts that hold the rib cage come in two types (Rev C.1).
+
+| Type | Parts | Screws | Fixing |
+|---|---|---|---|
+| Normal | `RIM-01` rim bay × 10, `SPC-01` mid-span spacer × 18 | none: no holes, no nut pockets | Glued to the rib faces in the flange slots |
+| Feed | `FLA-01` feed-leg anchor × 3, `RIM-02` feed rim bay × 6 | M4, with nut pockets in the `RIM-02` pads | Each anchor bolts to the two `RIM-02` bays beside ribs 60°, 180° and 300°; the feed legs bolt into the anchors |
+
+![Normal rim bay](images/parts/RIM-01.png) ![Feed rim bay](images/parts/RIM-02.png)
+
+- All of these have 2 mm filleted edges (`rib_support.fillet_radius` in `cad/parameters.yaml`); the bed face stays sharp.
+- The two `RIM-T` trunnion bays keep their axle and lock-sector holes, and the hub keeper ring keeps its six M4 bolts.
+- The glue joint (epoxy on plywood and PETG) is not tested. Glue one test piece and try to break it before building.
 
 ## Files
 
@@ -69,13 +84,13 @@ All dimensions come from `cad/parameters.yaml`, and each value there is tagged w
 | `cad/build.py` | Rev C generator: geometry, checks, frame analysis, exports |
 | `cad/build_ribs.py` | Rib audit (rib geometry against the supplied STL) |
 | `cad/fusion/telescope_joints/` | Fusion 360 script that adds the azimuth and elevation joints |
-| `exports/telescope_revC_az0_el45.step` | Full assembly: fixed_stand / turning_base / dish, 601 solids |
+| `exports/telescope_revC_az0_el45.step` | Full assembly: fixed_stand / turning_base / dish, 439 solids |
 | `exports/stages/` | The three stages at home pose (az 0, el 90), used by the Fusion script |
-| `exports/parts/` | One STEP per part type, including the coupon and jigs |
+| `exports/parts/` | One STEP per part type, including the fit coupon |
 | `print/` | Bed-oriented STLs, `print_specs.csv` (settings, supports, time) and `print_list.csv` |
 | `cad/print_prep.py` | Bed orientation, support check and print-time estimate (run by `build.py`) |
 | `bom/bom.csv`, `hardware.csv`, `cut_list.csv`, `rib_modifications.csv` | Parts, fasteners, battens, rib work |
-| `drawings/` | Rib drilling template (DXF, 1:1) |
+| `drawings/` | Rib cut template (DXF, 1:1) |
 | `images/` | Assembly, motion and build-stage renders; `images/parts/` one per part |
 | `drawings/rib_audit/`, `exports/rib_audit/` | Rib audit outputs, including the Rev A reference skeleton |
 | `analysis/assembly_report.md` | Kinematics, interference, structural and stability results of the last run |
@@ -88,8 +103,8 @@ All dimensions come from `cad/parameters.yaml`, and each value there is tagged w
 ## Stage checklist
 
 - [x] 1. Input and geometry audit
-- [x] 2. Centre joint (60 mm tip relief, drilled ribs, approved)
+- [x] 2. Centre joint (60 mm tip relief, approved; ribs no longer drilled)
 - [x] 3. Assembly: dish, feed support, fork mount, azimuth bearing, stand, enclosures
 - [x] 4. Structural review (frame analysis, joints, bearings, stability). RF review still open
-- [ ] 5. Fabrication package: BOM, print files, cut list and jigs done. Still to do: dimensioned drawings and an assembly guide
+- [ ] 5. Fabrication package: BOM, print files, cut list done. Still to do: dimensioned drawings and an assembly guide
 - [ ] 6. Commissioning and research package

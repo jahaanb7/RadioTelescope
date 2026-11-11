@@ -7,8 +7,9 @@ include about 10 % spare. Nothing has been priced.
 
 | Item | Quantity | Notes |
 |---|---|---|
-| PETG filament, 1.75 mm | **8 × 1 kg spools** | The parts use about 7.3 kg (`print/print_specs.csv`), plus spare for failed prints. Use one brand and colour throughout, so the fit coupon is valid for every part |
-| 1/8 in (3.2 mm) plywood ribs | 18, already cut | Your existing ribs. Cut and drill them as in `bom/rib_modifications.csv` |
+| PETG filament, 1.75 mm | **8 × 1 kg spools** | The parts use about 6.6 kg (`print/print_specs.csv`), plus spare for failed prints. Use one brand and colour throughout, so the fit coupon is valid for every part |
+| Two-part epoxy, 30 minute | 2 × 25 ml | Glues the 28 normal rib supports (`RIM-01`, `SPC-01`) and the rim-bay flanges to the ribs |
+| 1/8 in (3.2 mm) plywood ribs | 18, already cut | Your existing ribs. Cut the tip relief as in `bom/rib_modifications.csv`; no drilling |
 | 1x2 softwood batten (actual 19 × 38 mm) | **2 × 8 ft** (2.44 m) | Board 1: 4 × `LEG-A` at 570 mm. Board 2: 2 × `SIL-01` at 418 mm |
 | 1x3 softwood batten (actual 19 × 64 mm) | **2 × 8 ft** | Board 1: 4 × `SPK-01` at 507 mm. Board 2: 3 × `LEG-G` at 586 mm |
 | 3/4 in square softwood (19 × 19 mm) | **1 × 6 ft** (1.83 m) | 3 × `LEG-F` at 492 mm |
@@ -32,11 +33,11 @@ with 3 mm of saw kerf allowed for between pieces.
 | Item | Count in model | Buy |
 |---|---:|---:|
 | M4 × 12 hex bolt | 2 | 3 |
-| M4 × 20 hex bolt | 72 | 80 |
+| M4 × 20 hex bolt | 18 | 20 |
 | M4 × 30 hex bolt | 2 | 3 |
 | M4 × 35 hex bolt | 8 | 9 |
-| M4 nut | 84 | 93 |
-| M4 washer | 92 | 102 |
+| M4 nut | 30 | 33 |
+| M4 washer | 38 | 42 |
 | M6 × 35 hex bolt | 2 | 3 |
 | M6 × 40 hex bolt | 52 | 58 |
 | M6 × 70 carriage bolt (elevation lock) | 1 | 2 |
@@ -65,7 +66,7 @@ Boxed assortments of M4 and M6 bolts are usually cheaper than buying them loose.
 
 ## 5. Ballast and tools
 
-- **Ballast:** three sandbags or water jugs, up to 4.5 kg each, hung from the foot eyes in wind.
+- **Ballast:** three sandbags or water jugs, up to 5 kg each, hung from the foot eyes in wind.
 - **Tools:**
   - drill with 2.5, 4.5 and 6.5 mm bits;
   - saw with a mitre box;

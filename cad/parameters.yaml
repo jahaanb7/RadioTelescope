@@ -22,6 +22,12 @@ rib:
   mid_hole_radius: {value: 300.0, status: assumed, source: "one M4 hole per rib for the mid-span spacer"}
   mid_hole_z: {value: 22.0, status: assumed, source: "rib is 56 mm tall here"}
   drill_clearance: {value: 0.5, status: assumed, source: "4.5 mm drill for M4 in wood"}
+  tip_pin_radius: {value: 132.0, status: assumed, source: "one M4 cross pin per rib tip through the hub channel walls; replaces the keeper ring"}
+  tip_pin_z: {value: 5.0, status: assumed, source: "rib is 10.9 mm tall here; pin, washers and nut stay below the reflector surface"}
+
+rib_support:
+  fillet_radius: {value: 2.0, status: assumed, source: "rounds the edges of every printed rib support; falls back to 1.0 then none if OpenCascade refuses"}
+  spacer_radius: {value: 300.0, status: assumed, source: "radius of the mid-span spacer beam (was mid_hole_radius)"}
 
 rf:
   hydrogen_line_mhz: {value: 1420.405751, status: confirmed, source: "physical constant"}
@@ -80,12 +86,6 @@ battens:
   section: {value: [19.0, 38.0], status: requires_measurement, source: "1x2 SPF strapping, actual 3/4 x 1-1/2 in"}
   beam_section: {value: [19.0, 64.0], status: requires_measurement, source: "1x3 SPF, actual 3/4 x 2-1/2 in; base spokes and ground legs, which work in bending"}
   feed_leg_section: {value: [19.0, 19.0], status: requires_measurement, source: "3/4 in square strip"}
-lazy_susan:
-  size: {value: 152.4, status: confirmed, source: "6 in square steel lazy susan, 152.4 mm, 500 lb class"}
-  thickness: {value: 7.93, status: confirmed, source: "5/16 in, retailer listings"}
-  ring_mean_radius: {value: 68.0, status: assumed, source: "between 119 mm ID and 152 mm OD"}
-  plate_thickness: {value: 1.5, status: requires_measurement, source: "stamped plate; sets the recess depth in AZT-01 and AZB-01"}
-  recess_clearance: {value: 0.4, status: assumed, source: "square recess = plate + 0.4; the kingpin clamps the stack, so no screws are needed"}
 bearing_608: {value: [8.0, 22.0, 7.0], status: confirmed, source: "ISO 608: d x D x B; C0 = 1370 N"}
 feed_can:
   diameter: {value: 150.0, status: assumed, source: "about 0.71 wavelengths; must match the real can"}
@@ -113,8 +113,6 @@ dish:
   hub_disc_radius: {value: 70.0, status: assumed, source: "central floor"}
   hub_ring: {value: [122.0, 140.0], status: assumed, source: "outer floor ring, fits the 290 mm bed"}
   hub_wall: {value: 2.4, status: assumed, source: "rib channel walls"}
-  keeper_ring: {value: [122.0, 140.0], status: assumed, source: "clamps rib tips and the mesh centre"}
-  keeper_bolt_radius: {value: 131.0, status: assumed, source: "6 bolts between ribs"}
   spacer_flange_r: {value: [288.0, 312.0], status: assumed, source: "mid-span spacer flanges"}
   spacer_section: {value: [10.0, 12.0], status: assumed, source: "radial x height"}
   anchor_rib_angles: {value: [60.0, 180.0, 300.0], status: assumed, source: "feed legs land on rib ends, symmetric about the elevation plane, none on the side that swings down"}
@@ -136,14 +134,9 @@ mount:
   feed_socket_depth: {value: 45.0, status: assumed, source: "feed-leg insertion"}
   socket_floor: {value: 4.0, status: assumed, source: ""}
   socket_bolts_from_mouth: {value: [20.0, 45.0], status: assumed, source: "two M6 per socket"}
-  arm_half_spread: {value: 260.0, status: assumed, source: "A-frame feet at x = +/-260"}
+  arm_half_spread: {value: 325.0, status: assumed, source: "A-frame feet at x = +/-325: the base corners are the feet, so this is also the tipping lever (same 325 mm as the old tripod)"}
   brace_offset: {value: 200.0, status: assumed, source: "outboard brace foot, y = y_fork + 200"}
   pivot_clearance: {value: 25.0, status: assumed, source: "dish to base top at the lowest pose"}
-  ground_leg_angles: {value: [0.0, 120.0, 240.0], status: assumed, source: "three feet do not rock"}
-  foot_radius: {value: 650.0, status: assumed, source: ""}
-  foot_node_bottom: {value: 15.0, status: assumed, source: "levelling bolt exposed length at nominal"}
-  plate_disc_diameter: {value: 220.0, status: assumed, source: "covers the lazy susan corners (215 mm)"}
-  plate_disc_thickness: {value: 8.0, status: assumed, source: ""}
 
 loads:
   wind_operating: {value: 8.0, status: assumed, source: "m/s; stow and ballast above this"}

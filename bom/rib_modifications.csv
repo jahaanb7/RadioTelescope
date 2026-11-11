@@ -1,5 +1,3 @@
 operation,radius_from_dish_axis_mm,height_above_flat_back_edge_mm,dia_mm,per_rib,jig
 cut tip relief (hub end),60,full height,,1,mark with the DXF
-drill rim hole,474,45,0.5,1,JIG-01
-drill rim hole,474,95,0.5,1,JIG-01
-drill mid hole,300,22,0.5,1,JIG-02
+no drilled holes (Rev C.1),,,,0,rim and spacer supports are glued into the rib slots
