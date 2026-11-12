@@ -1,111 +1,146 @@
-# 1 m hydrogen-line radio telescope
+<div align="center">
 
-Status: **Rev C.2, modelled and checked. NOT RELEASED FOR FABRICATION** until the measurements in
-[docs/inputs_and_assumptions.md](docs/inputs_and_assumptions.md) are taken and the fit coupon `FIT-01` has been printed.
+# RadioTelescope
 
-A 1 m prime-focus dish for 1420 MHz built from 18 existing plywood ribs, straight softwood battens and PETG
-printed parts (Prusa CORE One L). The dish tilts in elevation in a fork on a fixed four-corner base; point it in
-azimuth by turning the whole base. Design decisions are in [docs/design_brief.md](docs/design_brief.md).
+**A 1 m dish for exploring the 21 cm hydrogen line.**
 
-![Rev C.2 CAD perspective](images/screenshots/perspective.png)
+Parametric CAD · Plywood structure · PETG joints · Manual pointing
 
-**[Assembly guide](docs/assembly_guide.md) · [Print settings](docs/printing.md) · [Shopping list](docs/shopping_list.md) · [CAD gallery](docs/gallery.md) · [Inspection checklist](docs/inspection.md)**
+[Build guide](docs/assembly_guide.md) · [Bill of materials](bom/README.md) · [Print guide](docs/printing.md) · [CAD gallery](docs/gallery.md)
 
-The supplied ZIP is the source of this Rev C.2 update. Numerical results below are from its saved analysis report; they have not been independently reproduced or physically validated.
+</div>
 
-## Key numbers (from `analysis/assembly_report.md`)
+![Rev C.2 radio telescope CAD perspective](images/screenshots/perspective.png)
 
-| | |
+<p align="center"><em>Revision C.2 CAD model. This is a design preview, not a photograph of a completed telescope.</em></p>
+
+## Overview
+
+RadioTelescope is a build-in-progress prime-focus dish designed for neutral hydrogen observations near **1420.405 MHz**. Eighteen plywood ribs define the reflector, while printed PETG joints connect the dish, feed supports and timber base. A bearing-supported fork provides elevation adjustment; azimuth is set by turning the whole base.
+
+This repository contains the editable CAD generator, printable parts, wood cut lists, hardware BOMs, drawings and illustrated assembly documentation. The current package focuses on the mechanical design. **The RF feed, receiver integration and observing workflow are still under development.**
+
+> [!IMPORTANT]
+> **Rev C.2 — not released for fabrication.** Measure the actual ribs and battens, print the `FIT-01` coupon and update the [input register](docs/inputs_and_assumptions.md) before committing to the full build. Saved model checks have not been independently reproduced or physically validated.
+
+## At a glance
+
+| Specification | Rev C.2 design |
 |---|---|
-| Motion | Elevation −5° to 90° (608 bearings, M8 axle). Azimuth: no turntable; turn the whole base |
-| Axle height | 615 mm; the dish centre of mass is 1.0 mm from the axle, predicted by the model; check actual balance during assembly |
-| Mass | 10.9 kg total: dish 5.95, base 5.00 |
-| PETG | about 5.35 kg, about 173 h of printing (61 parts, 23 part types including the fit coupon and two drill jigs); every part fits the 300 × 300 × 330 bed |
-| Wood | the 18 ribs plus 6.9 m of batten (19×38, 19×64, 19×19), 11 pieces |
-| Hardware | 423 bolts, nuts and washers (M4, M6, M8), four 608 bearings |
-| Checks | 516 solids, 0 invalid, 0 clashes (parts, every fastener, elevation sweep every 5°) |
-| Strength | worst batten 1.1 MPa against 10; worst socket joint 8 % used |
-| Wind | stable to about 8 m/s with no ballast; 1.4 kg per corner for 10 m/s, 3.3 kg for 12 m/s |
+| Reflector | 1,000 mm diameter; 18 plywood ribs and conductive mesh |
+| Target frequency | 1420.405 MHz, approximately 21 cm wavelength |
+| Focal geometry | 400.641 mm focal length; f/D = 0.4006 |
+| Pointing | −5° to 90° elevation; manual base rotation for azimuth |
+| Structure | Plywood ribs, softwood battens and PETG joints |
+| Estimated model mass | 10.9 kg |
+| Estimated printing | About 5.35 kg PETG and 173 hours; verify in the slicer |
+| Print envelope | Designed for a 300 × 300 × 330 mm build volume |
+| Mechanical purchase budget | **CAD $510.57** |
+| With provisional RF and computing hardware | **CAD $1,232.93**, before tax and shipping |
 
-## Repository layout
+Geometry comes from the [input register](docs/inputs_and_assumptions.md); model results are recorded in the [assembly report](analysis/assembly_report.md). Costs combine supplier-listed prices with explicit allowances. See the [itemized BOM](bom/README.md) for sources, quantities, exclusions and reuse deductions.
 
-| Path | Content |
+## Start building
+
+1. **Review the fit requirements.** Measure your plywood, battens and feed can using the [input register](docs/inputs_and_assumptions.md).
+2. **Check the budget and materials.** Use the [priced BOM](bom/README.md) and [shopping specifications](docs/shopping_list.md).
+3. **Print the fit coupon.** Follow the [printing guide](docs/printing.md), adjust `cad/parameters.yaml` and regenerate if dimensions change.
+4. **Prepare the wood and printed parts.** Follow the [cut list](bom/cut_list.csv), [rib modifications](bom/rib_modifications.csv) and [print list](print/print_list.csv).
+5. **Assemble and inspect.** Work through the [illustrated assembly guide](docs/assembly_guide.md), then record results in the [inspection checklist](docs/inspection.md).
+
+You will need access to a suitable 3D printer and basic woodworking tools. The [shopping list](docs/shopping_list.md#5-ballast-and-tools) includes the tool list. Receiver installation and first-light observations are future stages, not completed instructions.
+
+## Build documentation
+
+| I want to… | Open |
 |---|---|
-| `cad/parameters.yaml` | Every dimension, tolerance and material value, with status and source |
-| `cad/build.py` | Generator: geometry, checks, frame analysis and every export below |
-| `cad/print_prep.py` | Bed orientation, support check and print-time estimate (run by `build.py`) |
-| `cad/build_ribs.py` | Rib audit: rib geometry against the supplied STL |
-| `cad/fusion/telescope_joints/` | Fusion 360 script that adds the elevation joint (generated) |
-| `docs/` | [Assembly guide](docs/assembly_guide.md), [printing guide](docs/printing.md), [shopping list](docs/shopping_list.md), [design brief](docs/design_brief.md), [inputs and assumptions](docs/inputs_and_assumptions.md) |
-| `analysis/assembly_report.md` | Kinematics, interference, structural and stability results of the last build |
-| `bom/` | `bom.csv` parts, `hardware.csv` fasteners, `cut_list.csv` battens, `rib_modifications.csv` rib work |
-| `print/` | Bed-oriented STLs, `print_list.csv` (quantities and baseline settings) |
-| `exports/` (generated locally) | Full assembly, base/dish stages and per-part STEP files; run the full build to create them |
-| `drawings/` | `RIB_drilling_template_1to1.dxf` rib cut and drill template |
-| `images/` | Assembly, motion and build-stage renders; `images/parts/` one per part |
-| `inputs/Wood_Rib_Frame.stl` | Supplied rib outline, the only source of rib geometry |
+| Assemble the telescope | [Assembly guide](docs/assembly_guide.md) |
+| Price the build | [BOM and cost breakdown](bom/README.md) |
+| Buy materials and fasteners | [Shopping list](docs/shopping_list.md) |
+| Print the parts | [Print settings and quantities](docs/printing.md) |
+| Inspect the CAD from different angles | [CAD gallery](docs/gallery.md) |
+| Regenerate the model or use Fusion | [CAD workflow](docs/cad_workflow.md) |
+| Understand the design choices | [Design brief](docs/design_brief.md) |
+| Check assumptions and physical fit | [Inputs and assumptions](docs/inputs_and_assumptions.md) |
+| Review model checks or record build results | [Analysis report](analysis/assembly_report.md) · [Inspection checklist](docs/inspection.md) |
+| See revision history | [Changelog](CHANGELOG.md) |
 
-CAD renders and fabrication outputs are generated by the scripts. `images/screenshots/` contains the supplied CAD screenshots. Large STEP exports and historical rib-audit exports are regenerated locally; printable STLs, current drawings, BOMs and renders are included.
+## Cost breakdown
 
-## Regenerate
+**CAD · researched November 11, 2026 · one reference build**
 
+| Category | Budget |
+|---|---:|
+| Materials, bearings and ballast | $390.65 |
+| Fasteners, including spare quantities | $119.92 |
+| **Mechanical build** | **$510.57** |
+| Provisional RF, Pi 5 and storage setup | $722.36 |
+| **Complete reference build** | **$1,232.93** |
+
+The estimate assumes purchasing all listed stock and hardware. Reusing the existing ribs, Pi 5, microSD and SSD reduces the remaining listed purchases to **$748.43**. Tools, labour, electricity, tax and shipping are excluded. The [full BOM](bom/README.md) distinguishes supplier prices from estimates and includes an optional contingency.
+
+## Work with the CAD
+
+Clone the repository and create an isolated Python environment:
+
+```bash
+git clone https://github.com/jahaanb7/RadioTelescope.git
+cd RadioTelescope
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
 ```
-pip install -r requirements.txt
-python3 cad/build.py --quick       # model and every check, writes analysis/assembly_report.md (about 10 min)
-python3 cad/build.py               # the same plus all exports (about 30 min)
-python3 cad/build.py --az 120 --el 30   # the assembly STEP at another pose
-python3 cad/build_ribs.py          # rib audit against the supplied STL
+
+On Windows PowerShell, activate with `.venv\Scripts\Activate.ps1`.
+
+Run from the repository root:
+
+```bash
+# Build geometry and run checks without generating the full export set
+python cad/build.py --quick
+
+# Build geometry, run checks and regenerate fabrication exports
+python cad/build.py
 ```
 
-After measuring the ribs and battens, edit `cad/parameters.yaml` and rebuild. The build removes outputs of parts
-that no longer exist.
+Edit [cad/parameters.yaml](cad/parameters.yaml) to match measured materials. The full build writes STEP exports locally, including the base and dish stages used by the Fusion joint script. See the [CAD workflow](docs/cad_workflow.md) for poses, rib audits, generated outputs and Fusion setup.
 
-## Open it in Fusion 360 with a working joint
+Dependencies are not pinned to exact versions, so identical results across environments are not guaranteed. Record Python and package versions when reporting a build issue.
 
-First run `python3 cad/build.py` to create `exports/stages/base.step` and `dish.step`.
+## Repository map
 
-1. Start a new empty design with **File > New Design**.
-2. Open **Utilities > Add-Ins > Scripts and Add-Ins** (Shift+S). On the Scripts tab, click the green **+** and pick the folder `cad/fusion/telescope_joints`.
-3. Select it and click **Run**. It imports `exports/stages/base.step` and `dish.step`, grounds the base and adds the
-   **elevation** joint (the dish about the axle, 0° to 95° of tilt from zenith).
-4. Drag the dish to move it, or right-click the joint and choose **Drive Joints**.
-
-For a static view, use **File > Open** on `exports/telescope_revC_az0_el45.step`.
-
-## Build order
-
-1. Print `FIT-01`. Set `tolerances` in `cad/parameters.yaml` from what fits, then rebuild.
-2. Cut the 60 mm tip relief on each rib and drill the four 4.5 mm holes with jigs `JIG-01` and `JIG-02`
-   (`bom/rib_modifications.csv`, `drawings/RIB_drilling_template_1to1.dxf`).
-3. Print the parts in `print/print_list.csv`. Every STL is already laid flat for the bed.
-4. Cut and drill the battens from `bom/cut_list.csv`. Hole positions are measured from each end.
-5. Assemble the base and fork, then the dish, then put the dish in the fork and balance it
-   ([assembly guide](docs/assembly_guide.md)).
-
-## Rib supports
-
-| Parts | Fixing |
+| Directory | Contents |
 |---|---|
-| `RIM-01` rim bay × 10, `SPC-01` mid-span spacer × 18 | M4 side bolts through flange, rib, flange (two per rib at the rim, one at mid span); plain front |
-| `RIM-02` feed rim bay × 6 | The same side bolts, plus front pads with nut pockets for the feed anchors |
-| `FLA-01` feed-leg anchor × 3 | Bolts to the two `RIM-02` bays beside ribs 60°, 180° and 300°; the feed legs bolt into it |
-| `RIM-T` trunnion bay × 2 | Side bolts, plus the axle and lock-sector holes |
-| `HUB-01` | One M4 cross pin per rib tip through the channel walls, below the reflector surface (no keeper ring) |
+| [cad/](cad/) | Parametric model, configuration and Fusion joint script |
+| [inputs/](inputs/) | Source rib geometry |
+| [print/](print/) | Bed-oriented STLs and print list |
+| [bom/](bom/) | Priced BOM, model parts, fasteners and wood cut lists |
+| [drawings/](drawings/) | Full-scale rib drilling template |
+| [docs/](docs/) | Assembly, printing, CAD and inspection guides |
+| [images/](images/) | CAD screenshots, assembly stages and part renders |
+| [analysis/](analysis/) | Saved geometry and engineering analysis results |
 
-All rib supports have 2 mm filleted edges (`rib_support.fillet_radius`); bed faces stay sharp. Each rim bay and
-spacer has a zip-tie hole for the mesh.
+Large STEP files are generated into `exports/` locally. Keep generated CAD, BOMs and reports from the same revision together.
 
-## Stage checklist
+## Project status
 
-- [x] 1. Input and geometry audit
-- [x] 2. Centre joint (60 mm tip relief, M4 tip pins in the hub)
-- [x] 3. Assembly: dish, feed support, fork, fixed base, enclosures
-- [x] 4. Structural review (frame analysis, joints, bearings, stability). RF review still open
-- [x] 5. Fabrication package: BOM, print files, cut list, drilling template, assembly guide. Dimensioned drawings still open
-- [ ] 6. Commissioning and research package
+| Area | Status |
+|---|---|
+| Parametric mechanical design | Rev C.2 source and fabrication outputs included |
+| Model checks | Saved report included; results not independently reproduced |
+| Physical fit and assembly | Measurements and build validation pending |
+| RF feed and receiver | Provisional dimensions and budget; integration pending |
+| Dimensioned drawing set | Rib template included; complete drawing set pending |
+| Observations and commissioning | Not yet included |
 
-## Reproducing and contributing
+The analysis report contains model predictions, including clearance, strength and wind stability. They are not measured performance or a certified outdoor operating limit.
 
-Run commands from the repository root. Keep the parameters, generated BOM, print files and report from the same build together. Record your Python and dependency versions when reporting an issue; the current requirements specify minimum/unpinned versions, so identical geometry across environments is not guaranteed.
+## Contributing
 
-See the [inspection checklist](docs/inspection.md) for recording physical results. Documentation organization follows [OSHWA sharing practices](https://oshwa.org/resources/sharing-best-practices/): editable source, materials lists, assembly instructions and version history. No open hardware certification or license grant is implied.
+[Open an issue](https://github.com/jahaanb7/RadioTelescope/issues) for a fit problem, unclear instruction or proposed improvement. Include the revision, affected part IDs, measured dimensions and photographs or screenshots. For CAD errors, include the command, traceback and Python/dependency versions.
+
+Changes to geometry should include the corresponding regenerated fabrication files and an updated cost sheet when quantities change. Physical build reports and measured RF results are especially useful.
+
+## License
+
+No license file is currently included in this repository. Public access does not by itself grant an open-source or open-hardware license. Contact [Jahaan Bhavsar](https://github.com/jahaanb7) about reuse permissions.

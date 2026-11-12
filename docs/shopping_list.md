@@ -1,7 +1,9 @@
 # Shopping list: everything you need to build Rev C.2
 
 Quantities come from the model (`bom/bom.csv`, `bom/hardware.csv`, `bom/cut_list.csv`), and the fasteners
-include about 10 % spare. Nothing has been priced.
+include about 10 % spare.
+
+**[View the priced BOM and total cost](../bom/README.md).** The reference budget is **CAD $510.57 for the mechanical build** or **CAD $1,232.93 including provisional RF and computing hardware**, before tax and shipping. The cost sheet provides unit prices, extended totals, sources, estimate labels and deductions for existing equipment. This page retains the material specifications and cutting notes.
 
 ## 1. Materials
 
