@@ -1,14 +1,15 @@
 # Assembly guide: Rev C 1 m hydrogen-line radio telescope
 
-Part numbers (for example `RIM-01`) match the files in `print/`, `exports/parts/`, `images/parts/` and the lists
-in `bom/`. All bolts are hex-head grade 8.8 with a washer under the head and under the nut unless stated.
+Part numbers (for example `RIM-01`) match the files in `print/`, `images/parts/` and the lists in `bom/`.
+Individual-part STEP files can be regenerated with `python3 cad/build.py`. All bolts are hex-head grade 8.8
+with a washer under the head and under the nut unless stated.
 "Snug" means tight by hand with a short spanner: PETG creeps if you crush it.
 
 ![Finished telescope](../images/assembly_iso_el45.png)
 
 ## 0. Before you start
 
-1. **Measure** the rib board, the battens and the lazy susan (see `inputs_and_assumptions.md`). If any differ from
+1. **Measure** the rib board, the battens and the lazy susan (see the [input register](inputs_and_assumptions.md)). If any differ from
    `cad/parameters.yaml`, change the value and run `python3 cad/build.py` to regenerate every file.
 2. **Print `FIT-01` first** with the filament and settings you will use. Check, left to right:
    - 608 bores (22.00 / 22.10 / 22.20 / 22.25): the bearing should press into one bore with a vice and slide into a

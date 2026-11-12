@@ -1,5 +1,12 @@
 # Changelog
 
+## Repository cleanup, 2026-11-11
+
+- Removed the build prompt, generated Graphify cache, obsolete rib-audit exports, duplicate whole-assembly/per-part STEP exports, and empty placeholder folders.
+- Moved the design brief and input register into `docs/`; source CAD, ready-to-print STLs, BOMs, build guides, validation report, and Fusion stage models remain.
+- Full assembly and per-part STEP exports can be regenerated with `python3 cad/build.py` and are ignored by Git.
+
+
 ## Rev C, 2026-11-10
 
 - Redesign for minimum wood: only the 18 existing ribs and straight softwood battens; everything else printed in PETG

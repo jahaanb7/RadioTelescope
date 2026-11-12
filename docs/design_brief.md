@@ -53,4 +53,4 @@ No noise, gain or power budget has been calculated because no LNA, SDR or feed h
 3. Mesh type not chosen; mass per m² is a placeholder.
 4. Electronics enclosures are sized envelopes; no board drawings checked.
 5. Wind: ballast is needed above about 8 m/s (see the report). Do not leave it out unattended in wind.
-6. Not done: dimensioned PDF drawings, assembly guide, commissioning plan.
+6. Still needed: dimensioned fabrication drawings, RF design review, and a physical commissioning and validation plan.
