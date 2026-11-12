@@ -1,19 +1,18 @@
-"""Rev C: printed-node telescope, full assembly with working elevation and azimuth joints.
+"""Rev C.2: printed-node telescope on a fixed base, with a working elevation joint (no azimuth turntable).
 
 Run from the project root:
     python3 cad/build.py                 # build, check, analyse, export at the pose in parameters.yaml
-    python3 cad/build.py --el 20 --az 135  # export the assembly STEP at another pose
+    python3 cad/build.py --el 20         # export the assembly STEP at another elevation
     python3 cad/build.py --quick         # geometry and checks only, no file exports
 
 Stages (kinematic groups)
-    ground  fixed tripod stand, lower turntable plate, lazy-susan lower plate
-    az      everything that turns about the vertical kingpin: upper plate, base spokes, fork
+    az      the fixed base (name kept from Rev C): fork legs, sills, tie beams, corner nodes. It sits on the
+            ground on its four corner nodes; point it in azimuth by turning the whole base (or fit casters).
     dish    everything that tilts about the horizontal axle: ribs, hub, rim girder, feed
 
 Frames
     Dish-local: vertex at (0,0,0), +Z along the optical axis, ribs at 20 deg steps from +X.
-    World: Z up, ground at z=0, kingpin on the Z axis, elevation axle parallel to Y at height Zp.
-    Elevation tilts the dish toward +X. Azimuth turns the az and dish groups about Z.
+    World: Z up, ground at z=0, elevation axle parallel to Y at height Zp. Elevation tilts the dish toward +X.
 
 All geometry is PROVISIONAL until the fit coupon and the rib measurements are confirmed.
 """
@@ -52,7 +51,10 @@ RIM_HOLE_R = float(P("rib", "rim_hole_radius"))
 RIM_HOLE_Z = [float(z) for z in P("rib", "rim_hole_z")]
 MID_HOLE_R = float(P("rib", "mid_hole_radius"))
 MID_HOLE_Z = float(P("rib", "mid_hole_z"))
-DRILL = float(P("rib", "drill_clearance"))
+DRILL = 4.0 + float(P("rib", "drill_clearance"))   # drill size for the M4 holes in the ribs (4.5 mm)
+TIP_PIN_R = float(P("rib", "tip_pin_radius"))
+TIP_PIN_Z = float(P("rib", "tip_pin_z"))
+FILLET_R = float(P("rib_support", "fillet_radius"))
 STEP_DEG = 360.0 / N
 HALF_DEG = STEP_DEG / 2
 HALF = math.radians(HALF_DEG)
@@ -74,11 +76,6 @@ T_CAN = float(P("tolerances", "can_clearance"))
 SEC_LEG = tuple(float(x) for x in P("battens", "section"))        # 19 x 38
 SEC_BEAM = tuple(float(x) for x in P("battens", "beam_section"))  # 19 x 64
 SEC_FEED = tuple(float(x) for x in P("battens", "feed_leg_section"))
-LS_SIZE = float(P("lazy_susan", "size"))
-LS_T = float(P("lazy_susan", "thickness"))
-LS_PLATE = float(P("lazy_susan", "plate_thickness"))
-LS_RING_R = float(P("lazy_susan", "ring_mean_radius"))
-LS_CLR = float(P("lazy_susan", "recess_clearance"))
 B608 = [float(x) for x in RAW["bearing_608"]["value"]]
 CAN_D = float(P("feed_can", "diameter"))
 CAN_L = float(P("feed_can", "length"))
@@ -99,8 +96,6 @@ HUB_FLOOR = float(P("dish", "hub_floor"))
 HUB_DISC_R = float(P("dish", "hub_disc_radius"))
 HUB_RING0, HUB_RING1 = [float(x) for x in P("dish", "hub_ring")]
 HUB_WALL = float(P("dish", "hub_wall"))
-KEEP0, KEEP1 = [float(x) for x in P("dish", "keeper_ring")]
-KEEP_BOLT_R = float(P("dish", "keeper_bolt_radius"))
 SPC_R0, SPC_R1 = [float(x) for x in P("dish", "spacer_flange_r")]
 SPC_RAD, SPC_H = [float(x) for x in P("dish", "spacer_section")]
 ANCHOR_ANG = [float(x) for x in P("dish", "anchor_rib_angles")]
@@ -121,11 +116,6 @@ SOCK_FLOOR = float(P("mount", "socket_floor"))
 SOCK_BOLTS = [float(x) for x in P("mount", "socket_bolts_from_mouth")]
 ARM_X = float(P("mount", "arm_half_spread"))
 PIV_CLR = float(P("mount", "pivot_clearance"))
-GND_ANG = [float(x) for x in P("mount", "ground_leg_angles")]
-FOOT_R = float(P("mount", "foot_radius"))
-FOOT_BOTTOM = float(P("mount", "foot_node_bottom"))
-DISC_D = float(P("mount", "plate_disc_diameter"))
-DISC_T = float(P("mount", "plate_disc_thickness"))
 
 RHO_PETG = float(P("petg", "density_solid"))
 INFILL = float(P("petg", "infill"))
@@ -377,6 +367,27 @@ def mesh_top_cut(x0, x1, drop=1.0):
     return prism("XZ", pts, 400, "y", -200)
 
 
+def soften(solid, r=None):
+    """Round the edges of a printed rib support. The rim and spacer unions have sliver faces where the
+    flanges meet the chords, so OpenCascade refuses many edge sets at once. Edges are therefore tried one
+    at a time, longest first, and kept only if the accepted set still fillets cleanly at one radius.
+    Edges on the bed (z = 0) stay sharp so the part sits flat."""
+    rad = FILLET_R if r is None else r
+    accepted = []
+    for e in sorted(solid.Edges(), key=lambda e: -e.Length()):
+        if e.BoundingBox().zmax <= 1e-3 or e.Length() < 4 * rad:
+            continue
+        try:
+            trial = solid.fillet(rad, accepted + [e])
+            if trial.isValid():
+                accepted.append(e)
+        except Exception:
+            pass
+    if not accepted:
+        return solid
+    return solid.fillet(rad, accepted)
+
+
 def flange(r0, r1, z0, side, holes, pocket, strip_r=None):
     """Clamp flange lying on a rib face. Built for the rib at +HALF (side=+1) or -HALF (side=-1) of the bay.
     With strip_r, only the band r >= strip_r is full height; inboard of it the flange is a lobe round each bolt."""
@@ -399,9 +410,17 @@ def flange(r0, r1, z0, side, holes, pocket, strip_r=None):
     return rz(f, side * HALF_DEG)
 
 
-def rim_panel(trunnion_zp=None):
-    """One bay of the rim girder: top and bottom chords, X bracing, corner pads and two rib flanges.
-    Bay frame: mid-angle on +X, panel between x = X_IN and X_OUT."""
+def pad_positions():
+    """Four feed-anchor pads per rim bay: (y, z) in the bay frame, pads on both sides."""
+    pad_z = [(CHORD_H, CHORD_H + 24.0), (zpar(X_IN / math.cos(HALF)) - 1.0 - CHORD_H - 24.0,
+                                         zpar(X_IN / math.cos(HALF)) - 1.0 - CHORD_H)]
+    return [(sgn * 68.0, (z0 + z1) / 2) for sgn in (1, -1) for z0, z1 in pad_z], pad_z
+
+
+def rim_panel(holed=(), trunnion_zp=None):
+    """One bay of the rim girder: top and bottom chords, X bracing, bolted rib flanges.
+    holed: the pad sides (+1/-1) that take a feed-anchor bolt. Plain bays have no pads and no holes.
+    Bay frame: mid-angle on +X, panel between x = X_IN and X_OUT. Returns (solid, all pad positions)."""
     zt_in = zpar(X_IN / math.cos(HALF)) - 1.0
     chord_z = zt_in - CHORD_H
     yw = X_IN * math.tan(HALF) + 4
@@ -413,11 +432,10 @@ def rim_panel(trunnion_zp=None):
     for sgn in (1, -1):
         d = bx(X_IN, X_OUT, -ld / 2, ld / 2, zc - DIAG_W / 2, zc + DIAG_W / 2)
         parts.append(d.rotate(V(0, 0, zc), V(1, 0, zc), sgn * ang))
-    pad_h = 24.0
-    pad_z = [(CHORD_H, CHORD_H + pad_h), (chord_z - pad_h, chord_z)]
-    for sgn in (1, -1):
+    pads_all, pad_z = pad_positions()
+    for sgn in holed:
         for z0, z1 in pad_z:
-            parts.append(bx(X_IN, X_OUT, min(sgn * 54, sgn * (yw)), max(sgn * 54, sgn * yw), z0, z1))
+            parts.append(bx(X_IN, X_OUT, min(sgn * 54, sgn * yw), max(sgn * 54, sgn * yw), z0, z1))
     if trunnion_zp is not None:
         parts.append(bx(X_IN, Y_BLOCK, -TRUN_W / 2, TRUN_W / 2, 0, trunnion_zp + 25))
     body = fuse(parts)
@@ -425,7 +443,7 @@ def rim_panel(trunnion_zp=None):
     body = body.cut(mesh_top_cut(X_IN, X_OUT)) if trunnion_zp is None else body.cut(
         mesh_top_cut(X_IN, X_OUT).cut(bx(X_IN - 5, 600, -TRUN_W / 2, TRUN_W / 2, 0, 400)))
     body = body.intersect(bay_wedge())
-    holes = [(RIM_HOLE_R, z) for z in RIM_HOLE_Z]
+    holes = [(RIM_HOLE_R, z) for z in RIM_HOLE_Z]     # side bolts through flange - rib - flange (kept)
     sr = X_IN / math.cos(HALF) - 6
     body = fuse([body, flange(FLG_R0, FLG_R1, 0, 1, holes, True, sr), flange(FLG_R0, FLG_R1, 0, -1, holes, False, sr)])
     body = body.intersect(bx(0, X_OUT if trunnion_zp is None else Y_BLOCK, -200, 200, 0, 400))
@@ -433,36 +451,38 @@ def rim_panel(trunnion_zp=None):
         keep = bx(0, X_OUT, -200, 200, 0, 400).fuse(bx(X_OUT - 1, Y_BLOCK, -TRUN_W / 2, TRUN_W / 2, 0, 400))
         body = body.intersect(keep)
     cutters = []
-    pad_holes = [(sgn * 68.0, (z0 + z1) / 2) for sgn in (1, -1) for z0, z1 in pad_z]
-    for y, z in pad_holes:
-        cutters.append(hole(4 + T_HOLE, ((X_IN + X_OUT) / 2, y, z), (1, 0, 0), PANEL_T + 4))
-        cutters.append(nut_pocket(4, (X_IN, y, z), (1, 0, 0))[0])
-    for y in (-40, 0, 40):
-        if trunnion_zp is None or abs(y) > TRUN_W / 2:
-            cutters.append(hole(3.2, ((X_IN + X_OUT) / 2, y, chord_z + 4), (1, 0, 0), PANEL_T + 4))
+    for sgn in holed:
+        for z0, z1 in pad_z:
+            y, z = sgn * 68.0, (z0 + z1) / 2
+            cutters.append(hole(4 + T_HOLE, ((X_IN + X_OUT) / 2, y, z), (1, 0, 0), PANEL_T + 4))
+            cutters.append(nut_pocket(4, (X_IN, y, z), (1, 0, 0))[0])
+    # zip-tie holes for the mesh edge: one per bay (two on a trunnion bay, either side of the block)
+    for y in ((0,) if trunnion_zp is None else (-40, 40)):
+        cutters.append(hole(3.2, ((X_IN + X_OUT) / 2, y, chord_z + 4), (1, 0, 0), PANEL_T + 4))
     if trunnion_zp is not None:
         zp = trunnion_zp
         cutters.append(hole(8 + T_HOLE, ((X_IN + Y_BLOCK) / 2, 0, zp), (1, 0, 0), Y_BLOCK - X_IN + 4))
         cutters.append(hexp(AF[8] + T_NUT, 6.5, (X_IN - 0.5, 0, zp), (1, 0, 0)))
-        for y in (-22, 22):
+        for y in (-22, 22):   # M4 pins for the elevation lock sector ELS-01 (kept)
             cutters.append(hole(4 + T_HOLE, ((X_IN + Y_BLOCK) / 2, y, zp - 30), (1, 0, 0), Y_BLOCK - X_IN + 4))
-    return cut(body, cutters), pad_holes
+    return soften(cut(body, cutters)), pads_all
 
 
 def spacer():
-    """Mid-span spacer between two ribs: mesh support beam with two rib flanges (bay frame)."""
+    """Mid-span spacer between two ribs: mesh support beam with two bolted rib flanges (bay frame)."""
     xs = MID_HOLE_R * math.cos(HALF)
     x0, x1 = xs - SPC_RAD / 2, xs + SPC_RAD / 2
     zt = zpar(x0 / math.cos(HALF)) - 1.0
     beam = bx(x0, x1, -80, 80, zt - SPC_H, 200).cut(mesh_top_cut(x0, x1)).intersect(bay_wedge())
-    holes = [(MID_HOLE_R, MID_HOLE_Z)]
+    holes = [(MID_HOLE_R, MID_HOLE_Z)]                # side bolt through flange - rib - flange (kept)
     body = fuse([beam, flange(SPC_R0, SPC_R1, 6, 1, holes, True), flange(SPC_R0, SPC_R1, 6, -1, holes, False)])
-    cutters = [hole(3.2, (xs, y, zt - SPC_H / 2 - 1), (1, 0, 0), SPC_RAD + 4) for y in (-25, 25)]
-    return cut(body, cutters)
+    body = body.cut(hole(3.2, (xs, 0, zt - SPC_H / 2 - 1), (1, 0, 0), SPC_RAD + 4))   # one zip-tie hole for the mesh
+    return soften(body)
 
 
 def hub():
-    """Printed hub: central cap, 18 rib channels and an outer floor ring with keeper-bolt bosses."""
+    """Printed hub: central cap, 18 rib channels and an outer floor ring. Each rib tip is held by one M4 cross
+    pin through the channel walls, below the reflector surface, so nothing sits on the mesh (no keeper ring)."""
     cap = revolve([(0, -HUB_FLOOR), (HUB_DISC_R, -HUB_FLOOR), (HUB_DISC_R, 0), (RELIEF - 0.5, 0),
                    (RELIEF - 0.5, zpar(RELIEF)), (0, zpar(RELIEF))])
     ring = cyl(HUB_RING1, HUB_FLOOR, (0, 0, -HUB_FLOOR)).cut(cyl(HUB_RING0, HUB_FLOOR, (0, 0, -HUB_FLOOR)))
@@ -473,36 +493,11 @@ def hub():
     chan = fuse([bx(r0, HUB_RING1, -half_w, half_w, -HUB_FLOOR, 0),
                  prism("XZ", wall_pts, HUB_WALL, "y", W / 2 + T_SLOT / 2),
                  prism("XZ", wall_pts, HUB_WALL, "y", -half_w)])
-    parts = [cap, ring] + [rz(chan, k * STEP_DEG) for k in range(N)]
-    boss_top = zpar(KEEP_BOLT_R) - 0.3
-    bolts = []
-    for k in range(6):
-        a = HALF_DEG + 60 * k
-        parts.append(rz(cyl(7, 40, (KEEP_BOLT_R, 0, -HUB_FLOOR)), a))
-        bolts.append(a)
-    body = fuse(parts)
+    chan = chan.cut(hole(4 + T_HOLE, (TIP_PIN_R, 0, TIP_PIN_Z), (0, 1, 0), 2 * half_w + 4))
+    body = fuse([cap, ring] + [rz(chan, k * STEP_DEG) for k in range(N)])
     rr2 = np.linspace(0, HUB_RING1 + 10, 25)
     above = revolve([(r, zpar(r) + 0.5) for r in rr2] + [(HUB_RING1 + 10, 80), (0, 80)])
-    body = body.cut(above)
-    cutters = []
-    for a in bolts:
-        c, s = math.cos(math.radians(a)), math.sin(math.radians(a))
-        cutters.append(hole(4 + T_HOLE, (KEEP_BOLT_R * c, KEEP_BOLT_R * s, 0), (0, 0, 1), 60))
-        cutters.append(nut_pocket(4, (KEEP_BOLT_R * c, KEEP_BOLT_R * s, -HUB_FLOOR), (0, 0, 1))[0])
-    return cut(body, cutters), bolts, boss_top
-
-
-def keeper():
-    g, t = 0.5, 3.5
-    # underside follows the mesh; top is flat so the ring prints top-down with no supports
-    top_flat = zpar(KEEP1) + g + t
-    body = revolve([(KEEP0, zpar(KEEP0) + g), (KEEP1, zpar(KEEP1) + g), (KEEP1, top_flat), (KEEP0, top_flat)])
-    top = zpar(KEEP_BOLT_R) + g + t
-    cutters = []
-    for k in range(6):
-        cutters.append(rz(hole(4 + T_HOLE, (KEEP_BOLT_R, 0, 10), (0, 0, 1), 60), HALF_DEG + 60 * k))
-        cutters.append(rz(cyl(5.8, 20, (KEEP_BOLT_R, 0, top)), HALF_DEG + 60 * k))      # flat spot face
-    return cut(body, cutters), top
+    return body.cut(above), half_w
 
 
 def feed_geometry():
@@ -569,65 +564,80 @@ def mesh_area_m2():
 def build_dish(zp):
     """Everything that tilts. Built in the dish-local frame; zp is the elevation-axle height."""
     g = "dish"
-    # --- existing ribs, with the tip relief and the three drilled holes
+    # --- existing ribs, with the tip relief and four drilled holes (tip pin, mid, two at the rim)
     rr = np.linspace(RELIEF, R, 41)
     pts = [(ri, zpar(ri)) for ri in rr] + [(R, 0.0), (RELIEF, 0.0)]
     rib = prism("XZ", pts, W, "y", -W / 2)
-    for (hr, hz) in [(RIM_HOLE_R, z) for z in RIM_HOLE_Z] + [(MID_HOLE_R, MID_HOLE_Z)]:
-        rib = rib.cut(hole(4 + DRILL, (hr, 0, hz), (0, 1, 0), W + 2))
+    for (hr, hz) in [(RIM_HOLE_R, z) for z in RIM_HOLE_Z] + [(MID_HOLE_R, MID_HOLE_Z), (TIP_PIN_R, TIP_PIN_Z)]:
+        rib = rib.cut(hole(DRILL, (hr, 0, hz), (0, 1, 0), W + 2))
     for k in range(N):
         add("RIB", f"existing rib {k + 1:02d}", rz(rib, k * STEP_DEG), "plywood", g, "existing")
 
-    # --- hub and keeper ring
-    hub_s, hub_bolts, boss_top = hub()
-    add("HUB-01", "hub with 18 rib channels", hub_s, "petg", g, "print")
-    keep_s, keep_top = keeper()
-    add("HUB-02", "keeper ring (clamps rib tips and mesh centre)", keep_s, "petg", g, "print",
-        print_rot=[((1, 0, 0), 180)])
-    for a in hub_bolts:
-        c, s = math.cos(math.radians(a)), math.sin(math.radians(a))
-        seat = (KEEP_BOLT_R * c, KEEP_BOLT_R * s, keep_top)
-        grip = keep_top - (-HUB_FLOOR + NUT_T[4] + T_NUTD)
-        bolt(4, 20, seat, (0, 0, -1), g, nut_at=grip)
+    # --- hub; one M4 cross pin per rib tip, all below the reflector surface
+    hub_s, hub_half_w = hub()
+    add("HUB-01", "hub with 18 rib channels and tip pins", hub_s, "petg", g, "print")
 
-    # --- rim girder: 16 plain bays and 2 trunnion bays (centred on +Y and -Y)
-    plain, pad_holes = rim_panel()
-    trun, _ = rim_panel(trunnion_zp=zp)
+    def side_bolt(k, r_, z_, half, pocketed=True):
+        """M4 across rib k at (r_, z_); `half` is the distance from the rib mid-plane to the outer printed face."""
+        a_ = math.radians(k * STEP_DEG)
+        nrm = np.array([-math.sin(a_), math.cos(a_), 0.0])
+        p = np.array([r_ * math.cos(a_), r_ * math.sin(a_), z_])
+        if pocketed:      # head on the plain flange, nut in the pocketed flange
+            bolt(4, 20, p + nrm * half, -nrm, g, nut_at=2 * half - (NUT_T[4] + T_NUTD))
+        else:             # tip pin: same M4 x 20 as every other rib bolt, no washers (it only locates the tip)
+            bolt(4, 20, p + nrm * half, -nrm, g, washer=False, nut_at=2 * half)
+
+    for k in range(N):
+        side_bolt(k, TIP_PIN_R, TIP_PIN_Z, hub_half_w, pocketed=False)
+        for z in RIM_HOLE_Z:
+            side_bolt(k, RIM_HOLE_R, z, OFF + FLG_T)
+        side_bolt(k, MID_HOLE_R, MID_HOLE_Z, OFF + FLG_T)
+
+    # --- rim girder: 16 bays (10 plain, 6 feed bays with anchor pads) and 2 trunnion bays on +Y and -Y
+    trun = rim_panel(trunnion_zp=zp)[0]
     flat = [((0, 1, 0), -90)]
+    anchors = [a_ % 360.0 for a_ in ANCHOR_ANG]
+
+    def holed_sides(mid):
+        """Pad sides of a bay that face a feed anchor. The rib at mid + sgn*HALF sits on pad side sgn."""
+        out = []
+        for sgn in (-1, 1):
+            th = (mid + sgn * HALF_DEG) % 360.0
+            if any(min(abs(th - a_), 360.0 - abs(th - a_)) < 1e-6 for a_ in anchors):
+                out.append(sgn)
+        return tuple(out)
+
+    plain_cache, pad_all = {}, None
     for k in range(N):
         mid = k * STEP_DEG + HALF_DEG
         is_t = abs(mid - 90) < 1e-6 or abs(mid - 270) < 1e-6
         if is_t:
             add("RIM-T", f"rim girder trunnion bay {mid:.0f} deg", rz(trun, mid), "petg", g, "print", print_rot=flat)
+            continue
+        hs = holed_sides(mid)
+        if hs not in plain_cache:
+            plain_cache[hs], pad_all = rim_panel(holed=hs)
+        if hs:
+            add("RIM-02", f"feed rim bay {mid:.0f} deg (anchor pads)", rz(plain_cache[hs], mid), "petg", g, "print",
+                print_rot=flat)
         else:
-            add("RIM-01", f"rim girder bay {mid:.0f} deg", rz(plain, mid), "petg", g, "print", print_rot=flat)
-    for k in range(N):            # two M4 through flange - rib - flange at every rib end
-        a = k * STEP_DEG
-        c, s = math.cos(math.radians(a)), math.sin(math.radians(a))
-        nrm = np.array([-s, c, 0.0])
-        for z in RIM_HOLE_Z:
-            p = np.array([RIM_HOLE_R * c, RIM_HOLE_R * s, z])
-            # head on the plain flange (the +angle side of the rib), nut in the pocketed flange
-            bolt(4, 20, p + nrm * (OFF + FLG_T), -nrm, g, nut_at=2 * OFF + 2 * FLG_T - (NUT_T[4] + T_NUTD))
+            add("RIM-01", f"rim girder bay {mid:.0f} deg", rz(plain_cache[hs], mid), "petg", g, "print", print_rot=flat)
+    pad_holes = pad_all
 
-    # --- mid-span spacers
+    # --- mid-span spacers (their side bolts are added with the hub pins above)
     sp = spacer()
     for k in range(N):
         add("SPC-01", f"mid-span spacer bay {k * STEP_DEG + HALF_DEG:.0f} deg", rz(sp, k * STEP_DEG + HALF_DEG),
             "petg", g, "print", print_rot=flat)
-        a = k * STEP_DEG
-        c, s = math.cos(math.radians(a)), math.sin(math.radians(a))
-        nrm = np.array([-s, c, 0.0])
-        p = np.array([MID_HOLE_R * c, MID_HOLE_R * s, MID_HOLE_Z])
-        bolt(4, 20, p + nrm * (OFF + FLG_T), -nrm, g, nut_at=2 * OFF + 2 * FLG_T - (NUT_T[4] + T_NUTD))
 
     # --- feed support: three anchors on rib ends, three wooden legs, one split collar
     col_parts, col_cut, pinch, shelf_ang, shelf_holes, col_ro = collar()
     anchor_body, anchor_cut, anchor_bolts = feed_anchor(pad_holes)
+    anchor_soft = soften(anchor_body)     # round the bracket only; the leg socket keeps its square fit
     for ang in ANCHOR_ANG:
         m = feed_leg_member(ang)
         so, sc = m.socket("a")
-        body = cut(fuse([rz(anchor_body, ang), so]), [rz(c_, ang) for c_ in anchor_cut] + sc)
+        body = cut(fuse([rz(anchor_soft, ang), so]), [rz(c_, ang) for c_ in anchor_cut] + sc)
         add("FLA-01", f"feed-leg anchor {ang:.0f} deg", body, "petg", g, "print")
         for side, y, z in anchor_bolts:
             th = math.radians(ang + side * HALF_DEG)
@@ -740,33 +750,39 @@ def build_mount(zp, drop):
     Returns the world axle height Zp and a dict of geometry used by the analysis."""
     info = {}
     hb = SEC_BEAM[1] + T_SOCK + 2 * SOCK_WALL          # socket outer height for the deep battens
-    wb = SEC_BEAM[0] + T_SOCK + 2 * SOCK_WALL
-    z_gl = FOOT_BOTTOM + hb / 2                        # ground-leg centreline
-    z_azb0 = FOOT_BOTTOM + hb                          # underside of the fixed plate
-    z_azb1 = z_azb0 + DISC_T
-    z_azt0 = z_azb1 + LS_T - 2 * LS_PLATE              # underside of the rotating plate
-    z_azt1 = z_azt0 + DISC_T
-    zb = z_azt1 + hb / 2                               # base plane (spoke and sill centreline)
-    Zp = z_azt1 + hb + PIV_CLR + drop
-    info.update(z_gl=z_gl, zb=zb, Zp=Zp, base_top=z_azt1 + hb)
 
-    # ---------------- members
-    T = {s: np.array([0.0, s * Y_NODE_C, Zp]) for s in (1, -1)}
-    C = {(sx, sy): np.array([sx * ARM_X, sy * Y_NODE_C, zb]) for sx in (1, -1) for sy in (1, -1)}
-    AZT, AZB = np.array([0, 0, zb]), np.array([0, 0, z_gl])
-    FOOT = {a: np.array([FOOT_R * math.cos(math.radians(a)), FOOT_R * math.sin(math.radians(a)), z_gl]) for a in GND_ANG}
-    legs, sills, spokes, gls = {}, {}, {}, {}
-    for (sx, sy), c in C.items():
-        legs[(sx, sy)] = Member("LEG-A", f"fork leg x{'+' if sx > 0 else '-'} y{'+' if sy > 0 else '-'}", T[sy], c,
-                                SEC_LEG, (0, 1, 0), 22.0, 30.0, "az")
-        spokes[(sx, sy)] = Member("SPK-01", f"base spoke x{'+' if sx > 0 else '-'} y{'+' if sy > 0 else '-'}", AZT, c,
-                                  SEC_BEAM, (0, 0, 1), 38.0, 45.0, "az")
-    for sy in (1, -1):
-        sills[sy] = Member("SIL-01", f"base sill y{'+' if sy > 0 else '-'}", C[(1, sy)], C[(-1, sy)], SEC_LEG, (0, 0, 1),
-                           45.0, 45.0, "az")
-    for a, f in FOOT.items():
-        gls[a] = Member("LEG-G", f"ground leg {a:.0f} deg", AZB, f, SEC_BEAM, (0, 0, 1), 38.0, 14.0, "ground")
-    info.update(legs=legs, sills=sills, spokes=spokes, gls=gls)
+    def members(zb):
+        """All battens for a base plane at height zb. The axle clears the base top by PIV_CLR + drop."""
+        Zp_ = zb + hb / 2 + PIV_CLR + drop
+        T_ = {s: np.array([0.0, s * Y_NODE_C, Zp_]) for s in (1, -1)}
+        C_ = {(sx, sy): np.array([sx * ARM_X, sy * Y_NODE_C, zb]) for sx in (1, -1) for sy in (1, -1)}
+        legs_, sills_, ties_ = {}, {}, {}
+        for (sx, sy), c in C_.items():
+            legs_[(sx, sy)] = Member("LEG-A", f"fork leg x{'+' if sx > 0 else '-'} y{'+' if sy > 0 else '-'}", T_[sy], c,
+                                     SEC_LEG, (0, 1, 0), 22.0, 30.0, "az")
+        for sy in (1, -1):
+            sills_[sy] = Member("SIL-01", f"base sill y{'+' if sy > 0 else '-'}", C_[(1, sy)], C_[(-1, sy)], SEC_LEG,
+                                (0, 0, 1), 45.0, 45.0, "az")
+        for sx in (1, -1):     # tie beams under the dish join the two fork frames (they replace the turntable spokes)
+            ties_[sx] = Member("TIE-01", f"base tie x{'+' if sx > 0 else '-'}", C_[(sx, 1)], C_[(sx, -1)], SEC_BEAM,
+                               (0, 0, 1), 45.0, 45.0, "az")
+        return Zp_, T_, C_, legs_, sills_, ties_
+
+    def corner(sx, sy, legs_, sills_, ties_):
+        trio = ((legs_[(sx, sy)], "b"), (ties_[sx], "a" if sy > 0 else "b"), (sills_[sy], "a" if sx > 0 else "b"))
+        parts, cutters, pts = [], [], []
+        for m, end in trio:
+            so, sc = m.socket(end)
+            parts.append(so)
+            cutters += sc
+            pts += m.base_corners(end) + m.base_corners(end, SOCK_FLOOR)
+        parts.append(hull(pts))
+        return cut(fuse(parts), cutters)
+
+    _, _, _, l0, s0, t0 = members(0.0)                  # trial pass: how far a corner node reaches below the base plane
+    zb = -corner(1, 1, l0, s0, t0).BoundingBox().zmin   # the corner nodes are the feet: their undersides sit at z = 0
+    Zp, T, C, legs, sills, ties = members(zb)
+    info.update(zb=zb, Zp=Zp, base_top=zb + hb / 2, legs=legs, sills=sills, ties=ties)
 
     # ---------------- fork top nodes (bearing housing + two leg sockets + lock lug on +Y)
     for sy in (1, -1):
@@ -818,88 +834,12 @@ def build_mount(zp, drop):
                       hexp(AF[6] + T_NUT, NUT_T[6] + 0.5, (lp[0], yk - 0.01, lp[2]), (0, 1, 0))])
     add("KNB-01", "elevation lock knob (captures an M6 nut)", knob, "petg", "az", "print", print_rot=[((1, 0, 0), 90)])
 
-    # ---------------- base corner nodes
-    for (sx, sy), c in C.items():
-        parts, cutters = [], []
-        for m, end in ((legs[(sx, sy)], "b"), (spokes[(sx, sy)], "b"), (sills[sy], "a" if sx > 0 else "b")):
-            so, sc = m.socket(end)
-            parts.append(so)
-            cutters += sc
-        pts = []
-        for m, end in ((legs[(sx, sy)], "b"), (spokes[(sx, sy)], "b"), (sills[sy], "a" if sx > 0 else "b")):
-            pts += m.base_corners(end) + m.base_corners(end, SOCK_FLOOR)
-        parts.append(hull(pts))
+    # ---------------- base corner nodes (also the feet)
+    for (sx, sy) in C:
         add("FKC-01" if sx * sy > 0 else "FKC-02", f"base corner node x{'+' if sx > 0 else '-'} y{'+' if sy > 0 else '-'}",
-            cut(fuse(parts), cutters), "petg", "az", "print")
-    for m in list(legs.values()) + list(spokes.values()) + list(sills.values()) + list(gls.values()):
+            corner(sx, sy, legs, sills, ties), "petg", "az", "print")
+    for m in list(legs.values()) + list(ties.values()) + list(sills.values()):
         m.build()
-
-    # ---------------- turntable plates, lazy susan, kingpin
-    rec = (LS_SIZE + LS_CLR) / 2
-    parts, cutters = [cyl(DISC_D / 2, DISC_T, (0, 0, z_azt0)), cyl(22, 14, (0, 0, z_azt1))], []
-    for m in spokes.values():
-        so, sc = m.socket("a")
-        parts.append(so)
-        cutters += sc
-    for m in spokes.values():          # web from the hub boss to each socket, full socket height
-        parts.append(bar(np.array([0, 0, z_azt0]) + m.d * (m.sa0 + 6) / 2, np.array([0, 0, 1.0]), m.d, m.sa0 + 6, 6, hb))
-    cutters.append(bx(-rec, rec, -rec, rec, z_azt0 - 1, z_azt0 + LS_PLATE))
-    cutters.append(cyl(5 + T_HOLE / 2 + 0.1, 60, (0, 0, z_azt0 - 5)))
-    add("AZT-01", "rotating turntable plate with four spoke sockets", cut(fuse(parts), cutters), "petg", "az", "print")
-
-    parts, cutters = [cyl(DISC_D / 2, DISC_T, (0, 0, z_azb0)), cyl(22, 14, (0, 0, z_azb0 - 14))], []
-    for m in gls.values():
-        so, sc = m.socket("a")
-        parts.append(so)
-        cutters += sc
-    for m in gls.values():
-        parts.append(bar(np.array([0, 0, z_azb1 - hb]) + m.d * (m.sa0 + 6) / 2, np.array([0, 0, 1.0]), m.d, m.sa0 + 6, 6, hb))
-    cutters.append(bx(-rec, rec, -rec, rec, z_azb1 - LS_PLATE, z_azb1 + 1))
-    cutters.append(cyl(5 + T_HOLE / 2 + 0.1, 60, (0, 0, z_azb0 - 20)))
-    cutters.append(hexp(AF[10] + T_NUT, HEAD_T[10] + 0.62, (0, 0, z_azb0 - 14 - 0.01), (0, 0, 1)))
-    add("AZB-01", "fixed turntable plate with three ground-leg sockets", cut(fuse(parts), cutters), "petg", "ground",
-        "print", print_rot=[((1, 0, 0), 180)])
-
-    hole_ls = cyl(119.0 / 2, LS_T, (0, 0, z_azb1 - LS_PLATE))
-    lo = bx(-LS_SIZE / 2, LS_SIZE / 2, -LS_SIZE / 2, LS_SIZE / 2, z_azb1 - LS_PLATE, z_azb1).cut(hole_ls)
-    ringh = LS_T - 2 * LS_PLATE
-    race = cyl(LS_RING_R + 8, ringh, (0, 0, z_azb1)).cut(cyl(LS_RING_R - 8, ringh, (0, 0, z_azb1)))
-    add("LS-6IN", "6 in square lazy susan, fixed plate and ball race", lo.fuse(race).clean(), "steel", "ground",
-        "purchase", check=False, mass=0.25)
-    up = bx(-LS_SIZE / 2, LS_SIZE / 2, -LS_SIZE / 2, LS_SIZE / 2, z_azt0, z_azt0 + LS_PLATE).cut(hole_ls)
-    add("LS-6IN", "6 in square lazy susan, rotating plate", up, "steel", "az", "purchase", check=False, mass=0.25)
-
-    seat_k = z_azb0 - 14 + HEAD_T[10] + 0.6
-    top_k = z_azt1 + 14
-    Lk = 10 * math.ceil((top_k - seat_k + WASH[10][1] + NUT_T[10] * 1.25 + 2) / 10)
-    kp = fuse([cyl(5, Lk, (0, 0, seat_k)), hexp(AF[10], HEAD_T[10], (0, 0, seat_k - HEAD_T[10]), (0, 0, 1))])
-    add(f"HW-M10x{Lk}", f"M10 x {Lk} kingpin bolt", kp, "steel", "ground", "hardware", check=False)
-    wt = washer_at(10, (0, 0, top_k), (0, 0, 1), "ground")
-    nt = NUT_T[10] * 1.25
-    nut = hexp(AF[10], nt, (0, 0, top_k + wt), (0, 0, 1)).cut(cyl(5, nt + 1, (0, 0, top_k + wt - 0.5)))
-    add("HW-M10-nut-nyloc", "M10 nyloc nut", nut, "steel", "ground", "hardware", check=False)
-    kn = cq.Workplane("XY").workplane(offset=top_k + wt).polygon(8, 56).extrude(nt + 6).val()
-    kn = cut(kn, [hexp(AF[10] + T_NUT, nt + 0.3, (0, 0, top_k + wt - 0.01), (0, 0, 1)), cyl(5.4, 30, (0, 0, top_k))])
-    add("KNB-02", "azimuth friction knob (fits over the kingpin nyloc nut)", kn, "petg", "ground", "print",
-        print_rot=[((1, 0, 0), 180)])
-    info.update(seat_k=seat_k, top_k=top_k)
-
-    # ---------------- feet: leg socket, captured M10 nut, levelling bolt, ballast eye
-    for a, f in FOOT.items():
-        so, sc = gls[a].socket("b")
-        er = np.array([math.cos(math.radians(a)), math.sin(math.radians(a)), 0.0])
-        boss = cyl(17, hb, (f[0], f[1], FOOT_BOTTOM))
-        eye_c = f + er * 34
-        eye = rz(bx(FOOT_R + 10, FOOT_R + 48, -15, 15, z_gl - 5, z_gl + 5), a)
-        body = cut(fuse([so, boss, eye]), sc + [
-            cyl(5 + T_HOLE / 2 + 0.1, hb + 2, (f[0], f[1], FOOT_BOTTOM - 1)),
-            hexp(AF[10] + T_NUT, NUT_T[10] + 0.6, (f[0], f[1], FOOT_BOTTOM - 0.01), (0, 0, 1)),
-            cyl(7, 20, (eye_c[0], eye_c[1], z_gl - 10))])
-        add("FOOT-01", f"foot node {a:.0f} deg (levelling bolt, ballast eye)", body, "petg", "ground", "print")
-        lb = fuse([cyl(5, 70, (f[0], f[1], HEAD_T[10])), hexp(AF[10], HEAD_T[10], (f[0], f[1], 0), (0, 0, 1))])
-        add("HW-M10x70", "M10 x 70 levelling bolt (head down)", lb, "steel", "ground", "hardware", check=False)
-        nut = hexp(AF[10], NUT_T[10], (f[0], f[1], FOOT_BOTTOM + 0.3), (0, 0, 1)).cut(cyl(5, 20, (f[0], f[1], FOOT_BOTTOM - 1)))
-        add("HW-M10-nut", "M10 nut (captured in foot node)", nut, "steel", "ground", "hardware", check=False)
 
     # ---------------- electronics box on the +Y sill
     y_s = Y_NODE_C + SEC_LEG[0] / 2
@@ -1086,34 +1026,24 @@ def analyse(info, zp_local, dish_mass, dish_cg, report):
             idx[("T", s)] = fr.node(rot(info["legs"][(1, s)].pa))
         for key, m in info["legs"].items():
             idx[("C",) + key] = fr.node(rot(m.pb))
-        idx["AZT"] = fr.node(rot(info["spokes"][(1, 1)].pa))
-        idx["AZB"] = fr.node(info["gls"][GND_ANG[0]].pa)
-        for a, m in info["gls"].items():
-            idx[("F", a)] = fr.node(m.pb)
         for key, m in info["legs"].items():
             fr.el(idx[("T", key[1])], idx[("C",) + key], Ew, Gw, m.a, m.b, rot(m.h), "LEG-A " + m.name)
-        for key, m in info["spokes"].items():
-            fr.el(idx["AZT"], idx[("C",) + key], Ew, Gw, m.a, m.b, rot(m.h), "SPK-01 " + m.name)
+        for sx, m in info["ties"].items():
+            fr.el(idx[("C", sx, 1)], idx[("C", sx, -1)], Ew, Gw, m.a, m.b, rot(m.h), "TIE-01 " + m.name)
         for s, m in info["sills"].items():
             fr.el(idx[("C", 1, s)], idx[("C", -1, s)], Ew, Gw, m.a, m.b, rot(m.h), "SIL-01 " + m.name)
-        for a, m in info["gls"].items():
-            fr.el(idx["AZB"], idx[("F", a)], Ew, Gw, m.a, m.b, m.h, "LEG-G " + m.name)
         fr.el(idx[("T", 1)], idx[("T", -1)], Ew, Gw, 60, 60, (0, 0, 1), "dish (locked, rigid)", rigid=True)
-        fr.el(idx["AZB"], idx["AZT"], Ew, Gw, 60, 60, (1, 0, 0), "turntable stack (rigid)", rigid=True)
         return fr, idx, rot
 
     def lumped(fr, idx, rot):
-        """Weights of the az and ground parts lumped at the nearest frame node (dish handled separately)."""
+        """Weights of the base parts lumped at the nearest frame node (dish handled separately)."""
         loads = {}
         for p in PARTS:
             if p["group"] == "dish":
                 continue
             c = p["solid"].Center()
-            c = np.array([c.x, c.y, c.z])
-            if p["group"] == "az":
-                c = rot(c)
-            cands = [i for k, i in idx.items() if (p["group"] == "ground") == (k == "AZB" or (isinstance(k, tuple) and k[0] == "F"))]
-            i = min(cands, key=lambda i: np.linalg.norm(fr.nodes[i] - c))
+            c = rot(np.array([c.x, c.y, c.z]))
+            i = min(idx.values(), key=lambda i: np.linalg.norm(fr.nodes[i] - c))
             loads.setdefault(i, np.zeros(6))[2] -= mass_kg(p) * g
         return loads
 
@@ -1124,7 +1054,7 @@ def analyse(info, zp_local, dish_mass, dish_cg, report):
     push = float(P("loads", "handling_push"))
     Wd = dish_mass * g
     cases = []
-    for az in (0.0, 60.0):
+    for az in (0.0,):
         cases.append((f"gravity, zenith, az {az:.0f}", az, np.zeros(3), 0.0, 1.0))
         for v in (v_op,):
             D = cd * q(v) * area
@@ -1144,9 +1074,9 @@ def analyse(info, zp_local, dish_mass, dish_cg, report):
             loads.setdefault(idx[("T", s)], np.zeros(6))
             loads[idx[("T", s)]] += f
         fixed = []
-        for a in GND_ANG:
-            i = idx[("F", a)]
-            fixed += [6 * i, 6 * i + 1, 6 * i + 2]
+        for k, i in idx.items():           # the four corner nodes rest on the ground
+            if k[0] == "C":
+                fixed += [6 * i, 6 * i + 1, 6 * i + 2]
         U, Rx, els = fr.solve(loads, fixed)
         results.append((name, az, fr, idx, U, Rx, els, Fd))
     return results, cases
@@ -1202,7 +1132,7 @@ def structural_report(info, zp_local, dish_mass, dish_cg, results, log):
             f"{dmax:.2f} mm, {math.degrees(np.linalg.norm(rotv)) * 60:.1f} arcmin |")
     log("")
     log(f"Members are 1x2 ({SEC_LEG[0]:.0f} x {SEC_LEG[1]:.0f}) fork legs and sills and 1x3 ({SEC_BEAM[0]:.0f} x "
-        f"{SEC_BEAM[1]:.0f}) spokes and ground legs. Combined stress = axial + both bending terms at the worst end. "
+        f"{SEC_BEAM[1]:.0f}) tie beams. Combined stress = axial + both bending terms at the worst end. "
         f"Buckling use = compression / Euler load about the weak axis (K = 1). Dish movement is at the axle; the "
         f"beam is about 15 deg wide, so arcminutes are negligible.")
     log("")
@@ -1223,46 +1153,32 @@ def structural_report(info, zp_local, dish_mass, dish_cg, results, log):
         f"to the nearer bolt (7 d = 42 mm wanted for full M6 capacity; loads here are far below it).")
     log("")
 
-    # turntable, kingpin, tipping
-    log("### Turntable, kingpin and stability")
-    worst_tip = []
+    # corner reactions and tipping
+    log("### Base reactions and stability")
     for name, az, fr, idx, U, Rx, els, Fd in results:
-        st = [e for e in els if e["name"].startswith("turntable")][0]
-        f = st["f"]
-        Nst = f[0]                         # compression in the stack is positive at end i
-        Mst = math.hypot(f[4], f[5])
-        Tk = max(0.0, Mst / LS_RING_R - Nst)
-        reac = [Rx[6 * idx[("F", a)] + 2] for a in GND_ANG]
-        worst_tip.append((name, Nst, Mst / 1000, Tk, min(reac)))
-    for name, Nst, Mst, Tk, rmin in worst_tip:
-        log(f"- {name}: stack compression {Nst:.0f} N, moment {Mst:.1f} N m, kingpin tension needed {Tk:.0f} N, "
-            f"lowest foot reaction {rmin:.0f} N.")
-    tmax = max(r[3] for r in worst_tip)
-    log(f"- Kingpin M10 (58 mm^2 stress area): {tmax:.0f} N worst, {tmax / 58:.1f} MPa against 640 MPa yield. "
-        f"The head pocket in AZB-01 carries it in compression over "
-        f"{(AF[10] ** 2 * 0.866 - math.pi * 5.6 ** 2):.0f} mm^2: {tmax / (AF[10] ** 2 * 0.866 - math.pi * 5.6 ** 2):.2f} MPa.")
-    # tipping by hand statics with ballast
+        reac = [Rx[6 * i + 2] for k, i in idx.items() if k[0] == "C"]
+        log(f"- {name}: corner reactions {min(reac):.0f} to {max(reac):.0f} N (a negative value means that corner lifts).")
     m_tot = sum(mass_kg(p) for p in PARTS)
     area = math.pi * R ** 2 / 1e6
     cd = float(P("loads", "drag_coefficient"))
     h = info["Zp"] / 1000
-    d_tip = FOOT_R * math.cos(math.radians(60)) / 1000
+    d_tip = ARM_X / 1000
     target = float(P("loads", "ballast_ratio_target"))
-    log(f"- Total mass {m_tot:.1f} kg. Axle {info['Zp']:.0f} mm above the ground, feet on a {FOOT_R:.0f} mm radius, so "
-        f"the tipping lever is {1000 * d_tip:.0f} mm (wind toward a foot gap, the worst direction).")
+    log(f"- Total mass {m_tot:.1f} kg. Axle {info['Zp']:.0f} mm above the ground. The base stands on four corners, "
+        f"{2 * ARM_X:.0f} mm apart along the pointing direction and {2 * Y_NODE_C:.0f} mm along the axle, so the tipping "
+        f"lever is {1000 * d_tip:.0f} mm (wind along the pointing direction, the worst case).")
     log("")
-    log("| Wind | Drag (solid disc, Cd 1.2) | Overturning | Resisting, no ballast | Ratio | Ballast per foot for ratio 1.5 |")
+    log("| Wind | Drag (solid disc, Cd 1.2) | Overturning | Resisting, no ballast | Ratio | Ballast per upwind corner for ratio 1.5 |")
     log("|---:|---:|---:|---:|---:|---:|")
     for v in (5, 8, 10, 12, 15):
         D = 0.5 * 1.225 * v * v * cd * area
         Mo = D * h
         Mr = m_tot * g * d_tip
-        need = max(0.0, (target * Mo / d_tip - m_tot * g) / g) / 2   # two feet on the lifting side... conservative
-        need = max(0.0, (target * Mo - Mr) / (g * (FOOT_R / 1000 + d_tip)))   # one foot lifting, ballast on that foot
+        need = max(0.0, (target * Mo - Mr) / (g * 2 * d_tip)) / 2     # ballast on the two upwind corners
         log(f"| {v} m/s | {D:.0f} N | {Mo:.1f} N m | {Mr:.1f} N m | {Mr / Mo:.2f} | {need:.1f} kg |")
     log("")
-    log("Ballast hangs from the eye on each foot node (sandbags or water jugs). The lifting foot is the one "
-        "upwind of the tipping line, so put the same ballast on all three.")
+    log("Ballast is a sandbag or water jug laid over each end of the tie beams. The wind can come from either side, "
+        "so put the same ballast on all four corners.")
     log("")
 
     # elevation axle, bearings, lock
@@ -1489,7 +1405,6 @@ def shop_aids():
 PRINT_NOTES = {
     "FKT-01": "6 perimeters, 40% gyroid; bearing bores print vertical", "FKT-02": "6 perimeters, 40% gyroid",
     "FKC-01": "5 perimeters, 30% gyroid", "FKC-02": "5 perimeters, 30% gyroid",
-    "FOOT-01": "5 perimeters, 30% gyroid", "AZT-01": "5 perimeters, 30% gyroid", "AZB-01": "5 perimeters, 30% gyroid",
     "HUB-01": "5 perimeters, 30% gyroid", "RIM-T": "5 perimeters, 30% gyroid; axle pocket faces up",
     "ELS-01": "5 perimeters, 40% gyroid", "FIT-01": "same settings as the real parts",
 }
@@ -1515,6 +1430,9 @@ def export_all(info, zp, Zp, args, log):
     stale += [d("print", f) for f in os.listdir(d("print"))]
     stale += [d("drawings", f) for f in os.listdir(d("drawings")) if "PROVISIONAL" in f or f.startswith("view_")]
     stale += [d("bom", f) for f in os.listdir(d("bom"))]
+    stale += [d("exports/stages", f) for f in os.listdir(d("exports/stages"))]
+    if os.path.isdir(d("images/parts")):
+        stale += [d("images/parts", f) for f in os.listdir(d("images/parts"))]
     for f in stale:
         if os.path.isfile(f) and not f.endswith(".gitkeep"):
             os.remove(f)
@@ -1531,14 +1449,14 @@ def export_all(info, zp, Zp, args, log):
         return a
 
     top = cq.Assembly(name="radio_telescope_revC")
-    for g, nm in (("ground", "fixed_stand"), ("az", "turning_base"), ("dish", "dish")):
+    for g, nm in (("az", "base"), ("dish", "dish")):
         top.add(stage_assy(g, nm), name=nm, loc=stage_location(g, zp, Zp, args.el, args.az))
     pose_tag = f"az{args.az:.0f}_el{args.el:.0f}"
     top.save(d("exports", f"telescope_revC_{pose_tag}.step"))
-    for g, nm in (("ground", "fixed_stand"), ("az", "turning_base"), ("dish", "dish")):
+    for g, nm in (("az", "base"), ("dish", "dish")):
         stage_assy(g, nm, loc=stage_location(g, zp, Zp, 90.0, 0.0)).save(d("exports/stages", f"{nm}.step"))
-    log(f"- `exports/telescope_revC_{pose_tag}.step`: nested assembly (fixed_stand / turning_base / dish), "
-        f"{len(PARTS)} solids. `exports/stages/*.step`: the three moving stages at az 0, el 90 for Fusion.")
+    log(f"- `exports/telescope_revC_{pose_tag}.step`: nested assembly (base / dish), "
+        f"{len(PARTS)} solids. `exports/stages/*.step`: the two stages at el 90 for Fusion.")
 
     # --- one STEP per part type, print STLs, print list
     firsts, qty = OrderedDict(), {}
@@ -1602,8 +1520,8 @@ def export_all(info, zp, Zp, args, log):
                 ("zinc-plated, grade 8.8, DIN 603" if "carriage" in pid else "zinc-plated steel, grade 8.8 (ISO 4017 / 4032 / 7089)")
             w.writerow([pid, nm, q, math.ceil(q * 1.1), spec])
 
-    members = list(info["legs"].values()) + list(info["sills"].values()) + list(info["spokes"].values()) + \
-        list(info["gls"].values()) + [feed_leg_member(a) for a in ANCHOR_ANG]
+    members = list(info["legs"].values()) + list(info["sills"].values()) + list(info["ties"].values()) + \
+        [feed_leg_member(a) for a in ANCHOR_ANG]
     cuts = OrderedDict()
     for m in members:
         key = (m.pid, round(m.length))
@@ -1629,6 +1547,8 @@ def export_all(info, zp, Zp, args, log):
         for z in RIM_HOLE_Z:
             w.writerow(["drill rim hole", f"{RIM_HOLE_R:.0f}", f"{z:.0f}", f"{DRILL:.1f}", 1, "JIG-01"])
         w.writerow(["drill mid hole", f"{MID_HOLE_R:.0f}", f"{MID_HOLE_Z:.0f}", f"{DRILL:.1f}", 1, "JIG-02"])
+        w.writerow(["drill tip pin hole", f"{TIP_PIN_R:.0f}", f"{TIP_PIN_Z:.0f}", f"{DRILL:.1f}", 1,
+                    "drill through the HUB-01 channel-wall holes with the rib seated"])
     log(f"- `bom/`: bom.csv ({sum(1 for p in firsts.values() if p['kind'] != 'hardware')} part types), hardware.csv "
         f"({sum(hw.values())} fasteners and bearings), cut_list.csv ({sum(q for _, q in cuts.values())} battens, "
         f"{stock / 1000:.1f} m of stock before saw kerf), rib_modifications.csv.")
@@ -1641,12 +1561,12 @@ def export_all(info, zp, Zp, args, log):
     rr = np.linspace(0, R, 101)
     msp.add_lwpolyline([(r, zpar(r)) for r in rr] + [(R, 0), (0, 0)], close=True, dxfattribs={"layer": "RIB_OUTLINE"})
     msp.add_line((RELIEF, 0), (RELIEF, zpar(RELIEF) + 5), dxfattribs={"layer": "CUT", "color": 1})
-    for (r, z) in [(RIM_HOLE_R, z) for z in RIM_HOLE_Z] + [(MID_HOLE_R, MID_HOLE_Z)]:
+    for (r, z) in [(RIM_HOLE_R, z) for z in RIM_HOLE_Z] + [(MID_HOLE_R, MID_HOLE_Z), (TIP_PIN_R, TIP_PIN_Z)]:
         msp.add_circle((r, z), DRILL / 2, dxfattribs={"layer": "DRILL", "color": 1})
         msp.add_line((r - 6, z), (r + 6, z), dxfattribs={"layer": "DRILL"})
         msp.add_line((r, z - 6), (r, z + 6), dxfattribs={"layer": "DRILL"})
         msp.add_text(f"D{DRILL:.1f} r{r:.0f} z{z:.0f}", height=4, dxfattribs={"layer": "TEXT"}).set_placement((r + 8, z + 2))
-    msp.add_text(f"RIB x18: cut tip at r={RELIEF:.0f}, drill 3 holes D{DRILL:.1f}. 1:1 mm. Print at 100% and check the "
+    msp.add_text(f"RIB x18: cut tip at r={RELIEF:.0f}, drill 4 holes D{DRILL:.1f}. 1:1 mm. Print at 100% and check the "
                  f"{R:.0f} mm length.", height=5, dxfattribs={"layer": "TEXT"}).set_placement((0, -15))
     doc.saveas(d("drawings", "RIB_drilling_template_1to1.dxf"))
     log("- `drawings/RIB_drilling_template_1to1.dxf`: rib cut and drill template, 1:1.")
@@ -1658,7 +1578,7 @@ def export_all(info, zp, Zp, args, log):
         if f.startswith("view_") and f.endswith(".png"):
             os.remove(d("drawings", f))
 
-    def scene(el, az, groups=("ground", "az", "dish"), ids=None):
+    def scene(el, az, groups=("az", "dish"), ids=None):
         return [(pose_solid(p["solid"], p["group"], zp, Zp, el, az), kind_color(p)) for p in PARTS
                 if p["group"] in groups and (ids is None or p["id"] in ids)]
     for el, az, view, nm in ((45, 30, "iso", "assembly_iso_el45"), (90, 0, "iso", "assembly_iso_zenith"),
@@ -1667,12 +1587,13 @@ def export_all(info, zp, Zp, args, log):
                              (-5, 0, "side", "motion_el_minus5"), (30, 0, "side", "motion_el30"),
                              (60, 0, "side", "motion_el60"), (90, 0, "side", "motion_el90")):
         render(scene(el, az), os.path.join(img, f"{nm}.png"), view=view, title=f"Rev C   az {az} deg   el {el} deg")
-    render(scene(90, 0, ("ground",)), os.path.join(img, "stage1_fixed_stand.png"), view="iso",
-           title="Stage 1: fixed stand (ground legs, feet, AZB-01, lazy susan, kingpin)")
-    render(scene(90, 0, ("ground", "az")), os.path.join(img, "stage2_turning_base.png"), view="iso",
-           title="Stage 2: turning base on the stand (fork, corner nodes, AZT-01, lock)")
-    render(scene(90, 0, ("dish",), ids={"RIB", "HUB-01", "HUB-02"}), os.path.join(img, "stage3a_ribs_hub.png"),
-           view="iso", title="Stage 3a: ribs in the hub, keeper ring")
+    for old_img in ("stage1_fixed_stand.png", "stage2_turning_base.png"):
+        if os.path.exists(os.path.join(img, old_img)):
+            os.remove(os.path.join(img, old_img))
+    render(scene(90, 0, ("az",)), os.path.join(img, "stage1_base.png"), view="iso",
+           title="Stage 1: fixed base (fork legs, sills, tie beams, corner nodes, lock)")
+    render(scene(90, 0, ("dish",), ids={"RIB", "HUB-01"}), os.path.join(img, "stage3a_ribs_hub.png"),
+           view="iso", title="Stage 3a: ribs pinned in the hub (nothing above the reflector surface)")
     frame_ids = {p["id"] for p in PARTS if p["group"] == "dish"} - {"MESH-01", "FEED-01", "FRG-01", "LNA-01", "LNA-02",
                                                                      "LEG-F", "FLA-01"}
     render(scene(90, 0, ("dish",), ids=frame_ids),
@@ -1701,8 +1622,8 @@ def export_all(info, zp, Zp, args, log):
 
     # --- Fusion 360 joint script
     write_fusion_script(Zp)
-    log(f"- `cad/fusion/telescope_joints/`: Fusion 360 script that imports the stages and adds the azimuth and "
-        f"elevation joints. Export time {time.time() - t0:.0f} s.")
+    log(f"- `cad/fusion/telescope_joints/`: Fusion 360 script that imports the two stages and adds the "
+        f"elevation joint. Export time {time.time() - t0:.0f} s.")
 
 
 FUSION_TEMPLATE = r'''"""Fusion 360 script: build the Rev C radio telescope as a movable assembly.
@@ -1711,9 +1632,8 @@ Generated by cad/build.py; do not edit by hand (the axle height comes from the b
 
 How to run: Fusion 360 > Utilities > Add-Ins > Scripts and Add-Ins > + (green plus) > pick the folder
 cad/fusion/telescope_joints, then Run. Do it in a NEW empty design.
-It imports exports/stages/fixed_stand.step, turning_base.step and dish.step into three components,
-grounds the fixed stand and adds two as-built revolute joints:
-  Azimuth    turning_base about the vertical axis through the kingpin (world Z at the origin), no limit.
+It imports exports/stages/base.step and dish.step into two components,
+grounds the base and adds one as-built revolute joint:
   Elevation  dish about the axle (parallel to Y, {ZP_MM:.1f} mm above the ground), 0 to {TILT_MAX:.0f} deg of tilt
              from zenith (elevation 90 to {EL_MIN:.0f} deg).
 Drag the dish or use the joint's "Drive Joints" to move it. If the dish tilts the wrong way, swap the two limits.
@@ -1726,7 +1646,7 @@ import traceback
 
 ZP_CM = {ZP_CM:.4f}             # elevation axle height above the ground, cm (Fusion API units)
 TILT_MAX_DEG = {TILT_MAX:.1f}   # zenith to the lowest elevation
-STAGES = ["fixed_stand", "turning_base", "dish"]
+STAGES = ["base", "dish"]
 
 
 def run(context):
@@ -1750,7 +1670,7 @@ def run(context):
             opts.isViewFit = False
             app.importManager.importToTarget(opts, o.component)
             occ[name] = o
-        occ["fixed_stand"].isGrounded = True
+        occ["base"].isGrounded = True
 
         def point_geometry(x, y, z):
             sk = root.sketches.add(root.xYConstructionPlane)
@@ -1759,14 +1679,8 @@ def run(context):
             sp = sk.sketchPoints.add(p)
             return adsk.fusion.JointGeometry.createByPoint(sp)
 
-        # azimuth: turning base on the fixed stand, about world Z through the origin
-        ji = root.asBuiltJoints.createInput(occ["turning_base"], occ["fixed_stand"], point_geometry(0, 0, 0))
-        ji.setAsRevoluteJointMotion(adsk.fusion.JointDirections.ZAxisJointDirection)
-        az = root.asBuiltJoints.add(ji)
-        az.name = "Azimuth"
-
         # elevation: dish on the turning base, about the axle (parallel to world Y at height ZP)
-        ji = root.asBuiltJoints.createInput(occ["dish"], occ["turning_base"], point_geometry(0, 0, ZP_CM))
+        ji = root.asBuiltJoints.createInput(occ["dish"], occ["base"], point_geometry(0, 0, ZP_CM))
         ji.setAsRevoluteJointMotion(adsk.fusion.JointDirections.YAxisJointDirection)
         el = root.asBuiltJoints.add(ji)
         el.name = "Elevation"
@@ -1778,7 +1692,7 @@ def run(context):
         lim.isRestValueEnabled = True
         lim.restValue = 0.0
         app.activeViewport.fit()
-        ui.messageBox("Telescope assembled. Joints: Azimuth (free), Elevation (0 to %.0f deg tilt).\n"
+        ui.messageBox("Telescope assembled. Joint: Elevation (0 to %.0f deg tilt).\n"
                       "Drag the dish, or right-click a joint > Drive Joints." % TILT_MAX_DEG)
     except Exception:
         ui.messageBox("Failed:\n" + traceback.format_exc())
@@ -1793,7 +1707,7 @@ def write_fusion_script(Zp):
         fh.write(txt)
     with open(os.path.join(folder, "telescope_joints.manifest"), "w") as fh:
         fh.write('{\n  "autodeskProduct": "Fusion360",\n  "type": "script",\n  "author": "",\n'
-                 '  "description": {"": "Import the Rev C telescope stages and add azimuth and elevation joints"},\n'
+                 '  "description": {"": "Import the Rev C telescope stages and add the elevation joint"},\n'
                  '  "supportedOS": "Windows|Mac",\n  "editEnabled": true\n}\n')
 
 
@@ -1822,22 +1736,21 @@ def main():
     info = build_mount(zp, drop)
     Zp = info["Zp"]
     m_az, _ = group_cg(("az",))
-    m_gnd, _ = group_cg(("ground",))
 
     log("# Rev C assembly report")
     log("")
     log("Generated by `cad/build.py`. Modelled and analytically checked; nothing physically tested.")
-    log("**NOT RELEASED FOR FABRICATION** until the rib thickness, batten sizes and lazy-susan plate thickness are "
+    log("**NOT RELEASED FOR FABRICATION** until the rib thickness, batten sizes are "
         "measured and the fit coupon `FIT-01` has been printed.")
     log("")
     log("## Kinematics")
     log(f"- Elevation axle: parallel to Y, {zp:.1f} mm above the dish vertex, {Zp:.1f} mm above the ground. "
         f"Range {EL_MIN:.0f} to {EL_MAX:.0f} deg; the ends of the lock slot are the hard stops.")
-    log(f"- Azimuth axis: vertical through the kingpin. Unlimited mechanically; keep within +/-270 deg for the cables.")
+    log("- Azimuth: no turntable. The base is fixed; point it by turning the whole base on the ground (or on casters).")
     log(f"- Lowest reach of the dish below the axle over the elevation range: {drop:.1f} mm. "
         f"Clearance to the top of the base: {PIV_CLR:.0f} mm.")
     log(f"- Masses: dish {m_dish:.2f} kg (centre of mass x {cg_dish[0]:+.1f}, y {cg_dish[1]:+.1f}, "
-        f"z {cg_dish[2] - zp:+.1f} mm from the axle), turning base {m_az:.2f} kg, fixed stand {m_gnd:.2f} kg.")
+        f"z {cg_dish[2] - zp:+.1f} mm from the axle), fixed base {m_az:.2f} kg.")
 
     # 2. solids and printability
     log("")
@@ -1870,14 +1783,14 @@ def main():
     log("## Interference checks (solid intersections over 0.5 mm^3)")
     by = lambda g, kinds: [p for p in PARTS if p["group"] == g and p["check"] and p["kind"] in kinds]
     struct = ("print", "wood", "existing", "purchase")
-    for g in ("dish", "az", "ground"):
+    for g in ("dish", "az"):
         ov = overlaps(by(g, struct))
         log(f"- Within the {g} group ({len(by(g, struct))} solids): {len(ov)} interfering pairs.")
         for o in ov[:12]:
             log(f"  - {o[0]} ({o[1]}) with {o[2]} ({o[3]}): {o[4]:.1f} mm^3")
     hw_fail = []
     n_hw = 0
-    for g in ("dish", "az", "ground"):
+    for g in ("dish", "az"):
         hw = [dict(p, check=True) for p in PARTS if p["group"] == g and p["kind"] == "hardware"]
         n_hw += len(hw)
         hw_fail += overlaps(hw, by(g, struct))
@@ -1909,18 +1822,7 @@ def main():
     log("")
     log("The M8 axle bolts pass through the bearing bores of the fork nodes by design and are excluded.")
     log("")
-    log("### Azimuth sweep: turning base (with the dish at the horizon) against the fixed stand")
-    ground = [p for p in PARTS if p["group"] == "ground" and p["kind"] in struct + ("hardware",)
-              and not p["id"].startswith("HW-M10") and p["id"] != "KNB-02"]
-    turn = [p for p in PARTS if p["group"] == "az" and p["kind"] in struct + ("hardware",)] + moving
     az_fail = 0
-    for az in np.arange(0, 180, 15.0):
-        posed = [dict(p, solid=pose_solid(p["solid"], p["group"], zp, Zp, 0.0, az)) for p in turn]
-        ov = [o for o in overlaps(posed, ground) if o[2] not in ("AZB-01", "LS-6IN")]
-        az_fail += len(ov)
-        for o in ov[:4]:
-            log(f"  - az {az:.0f}: {o[0]} ({o[1]}) with {o[2]} ({o[3]}): {o[4]:.0f} mm^3")
-    log(f"- Azimuth 0 to 165 deg in 15 deg steps (the base repeats every 180 deg): {az_fail} clashes.")
 
     # 4. structural checks
     log("")

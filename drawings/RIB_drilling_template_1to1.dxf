@@ -489,7 +489,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2461355.40244213
+2461356.924525463
   9
 $TDUCREATE
  40
@@ -497,7 +497,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2461355.40244213
+2461356.924525463
   9
 $TDUUPDATE
  40
@@ -549,7 +549,7 @@ $SPLINESEGS
   9
 $HANDSEED
   5
-9C
+A0
   9
 $SURFTAB1
  70
@@ -929,11 +929,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{54FCC621-20F6-497A-82A6-F8F05F76A8D7}
+{3ADBCB02-1002-44E6-A3A9-FCE0DA0FDB73}
   9
 $VERSIONGUID
   2
-{C4E2EB55-8EE1-45A2-8D15-6DD3063B6818}
+{F4A32F80-BC89-4F1E-A005-3EF2EC83F81B}
   9
 $EXTNAMES
 290
@@ -3085,7 +3085,7 @@ ACAD
   0
 APPID
   5
-99
+9D
 330
 3
 100
@@ -3099,7 +3099,7 @@ HATCHBACKGROUNDCOLOR
   0
 APPID
   5
-9A
+9E
 330
 3
 100
@@ -5683,7 +5683,7 @@ AcDbCircle
  30
 0.0
  40
-0.25
+2.25
   0
 LINE
   5
@@ -5753,7 +5753,7 @@ AcDbText
  40
 4.0
   1
-D0.5 r474 z45
+D4.5 r474 z45
  11
 482.0
  21
@@ -5783,7 +5783,7 @@ AcDbCircle
  30
 0.0
  40
-0.25
+2.25
   0
 LINE
   5
@@ -5853,7 +5853,7 @@ AcDbText
  40
 4.0
   1
-D0.5 r474 z95
+D4.5 r474 z95
  11
 482.0
  21
@@ -5883,7 +5883,7 @@ AcDbCircle
  30
 0.0
  40
-0.25
+2.25
   0
 LINE
   5
@@ -5953,7 +5953,7 @@ AcDbText
  40
 4.0
   1
-D0.5 r300 z22
+D4.5 r300 z22
  11
 308.0
  21
@@ -5963,9 +5963,109 @@ D0.5 r300 z22
 100
 AcDbText
   0
-TEXT
+CIRCLE
   5
 98
+330
+17
+100
+AcDbEntity
+  8
+DRILL
+ 62
+1
+100
+AcDbCircle
+ 10
+132.0
+ 20
+5.0
+ 30
+0.0
+ 40
+2.25
+  0
+LINE
+  5
+99
+330
+17
+100
+AcDbEntity
+  8
+DRILL
+100
+AcDbLine
+ 10
+126.0
+ 20
+5.0
+ 30
+0.0
+ 11
+138.0
+ 21
+5.0
+ 31
+0.0
+  0
+LINE
+  5
+9A
+330
+17
+100
+AcDbEntity
+  8
+DRILL
+100
+AcDbLine
+ 10
+132.0
+ 20
+-1.0
+ 30
+0.0
+ 11
+132.0
+ 21
+11.0
+ 31
+0.0
+  0
+TEXT
+  5
+9B
+330
+17
+100
+AcDbEntity
+  8
+TEXT
+100
+AcDbText
+ 10
+140.0
+ 20
+7.0
+ 30
+0.0
+ 40
+4.0
+  1
+D4.5 r132 z5
+ 11
+140.0
+ 21
+7.0
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+9C
 330
 17
 100
@@ -5983,7 +6083,7 @@ AcDbText
  40
 5.0
   1
-RIB x18: cut tip at r=60, drill 3 holes D0.5. 1:1 mm. Print at 100% and check the 500 mm length.
+RIB x18: cut tip at r=60, drill 4 holes D4.5. 1:1 mm. Print at 100% and check the 500 mm length.
  11
 0.0
  21
@@ -7083,7 +7183,7 @@ CREATED_BY_EZDXF
   3
 WRITTEN_BY_EZDXF
 350
-9B
+9F
   0
 DICTIONARYVAR
   5
@@ -7095,7 +7195,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-11-10T14:39:31.155754+00:00
+1.4.5 @ 2026-11-12T03:11:19.777862+00:00
   0
 VISUALSTYLE
   5
@@ -7799,7 +7899,7 @@ X-Ray
   0
 DICTIONARYVAR
   5
-9B
+9F
 330
 2D
 100
@@ -7807,7 +7907,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-11-10T14:39:31.160987+00:00
+1.4.5 @ 2026-11-12T03:11:19.784976+00:00
   0
 ENDSEC
   0

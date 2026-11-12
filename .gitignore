@@ -1,22 +1,11 @@
-# macOS
 .DS_Store
-
-# Python
 __pycache__/
 *.pyc
 .venv/
 venv/
-
-# Editors
 .vscode/
 .idea/
-
-# Local tooling
 .claude/
-
-# Generated CAD and analysis outputs (regenerate with cad/build.py)
 graphify-out/
-exports/parts/
-exports/rib_audit/
+exports/
 drawings/rib_audit/
-exports/telescope_revC_az0_el45.step

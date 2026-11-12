@@ -2,7 +2,7 @@
   "autodeskProduct": "Fusion360",
   "type": "script",
   "author": "",
-  "description": {"": "Import the Rev C telescope stages and add azimuth and elevation joints"},
+  "description": {"": "Import the Rev C telescope stages and add the elevation joint"},
   "supportedOS": "Windows|Mac",
   "editEnabled": true
 }
