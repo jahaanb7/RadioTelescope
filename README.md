@@ -122,6 +122,10 @@ Dependencies are not pinned to exact versions, so identical results across envir
 
 Large STEP files are generated into `exports/` locally. Keep generated CAD, BOMs and reports from the same revision together.
 
+## Rib-joint redesign
+
+An [experimental quarter-turn rib-lock design](experiments/rib_locks/README.md) explores replacing 40 M4 sets with 40 printed locks while retaining the hub, feed-anchor and trunnion connections. It includes printable fit coupons, STEP geometry and a separate dish generator. **Prototype only:** fit, stiffness and load testing are required before adoption; the Rev C.2 fabrication package remains the baseline.
+
 ## Project status
 
 | Area | Status |
@@ -144,3 +148,4 @@ Changes to geometry should include the corresponding regenerated fabrication fil
 ## License
 
 No license file is currently included in this repository. Public access does not by itself grant an open-source or open-hardware license. Contact [Jahaan Bhavsar](https://github.com/jahaanb7) about reuse permissions.
+

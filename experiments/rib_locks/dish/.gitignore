@@ -1,0 +1,3 @@
+# Large experimental fabrication exports are regenerated with --export.
+*.stl
+*.step
